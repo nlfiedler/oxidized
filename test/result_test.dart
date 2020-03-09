@@ -38,6 +38,20 @@ void main() {
       expect(Result.err(Exception()).expectErr('oh no'), isA<Exception>());
     });
 
+    test('matching results', () {
+      var called = 0;
+      Result.ok(3).match((v) {
+        expect(v, equals(3));
+        called++;
+      }, (err) => fail('oh no'));
+      expect(called, equals(1));
+      Result.err(Exception()).match((v) => fail('oh no'), (err) {
+        expect(err, isNotNull);
+        called++;
+      });
+      expect(called, equals(2));
+    });
+
     test('mapping values', () {
       expect(Result.ok(5).map((v) => v * 2).unwrap(), equals(10));
       expect(Result.ok(5).mapOr((v) => v * 2, 2), equals(10));
@@ -47,13 +61,24 @@ void main() {
 
     test('mapping errors', () {
       expect(Result.ok(5).mapErr((v) => fail('oh no')).unwrap(), equals(5));
+      var called = 0;
+      Result.err(Exception()).mapErr((e) => called++);
+      expect(called, equals(1));
       expect(Result.err(Exception()).map((e) => Exception()).isErr(), isTrue);
       expect(Result.err(Exception()).mapOr((v) => fail('oh no'), 2), equals(2));
       expect(Result.err(Exception()).mapOrElse((v) => fail('oh no'), (e) => 2),
           equals(2));
     });
 
+    test('result as an option', () {
+      expect(Result.ok(5).ok().isSome(), isTrue);
+      expect(Result.err(Exception()).ok().isNone(), isTrue);
+      expect(Result.ok(5).err().isNone(), isTrue);
+      expect(Result.err(Exception()).err().isSome(), isTrue);
+    });
+
     test('this and that', () {
+      expect(Result.ok(2).and(Result.ok(1)).isOk(), isTrue);
       expect(Result.ok(2).and(Result.err(Exception())).isErr(), isTrue);
       expect(Result.err(Exception()).and(Result.ok(2)).isErr(), isTrue);
       expect(Result.ok(2).andThen((v) => Result.ok(v * 2)).unwrap(), equals(4));

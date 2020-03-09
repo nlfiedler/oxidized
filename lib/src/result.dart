@@ -1,6 +1,7 @@
 //
 // Copyright (c) 2020 Nathan Fiedler
 //
+import './option.dart';
 
 /// The type of the result, either `ok` or `err`, useful with `switch`.
 enum ResultType { ok, err }
@@ -50,6 +51,37 @@ class Result<Ok, Err> {
   /// Returns `true` if the result is `Err`.
   bool isErr() {
     return _err != null;
+  }
+
+  /// Invokes either the `okop` or the `errop` depending on the result.
+  ///
+  /// This is an attempt at providing something similar to the Rust `match`
+  /// expression, which makes it easy to get at the value or error, depending on
+  /// the result.
+  void match(void Function(Ok) okop, void Function(Err) errop) {
+    if (_ok != null) {
+      okop(_ok);
+    } else {
+      errop(_err);
+    }
+  }
+
+  /// Converts the `Result` into an `Option` containing the value, if any.
+  /// Otherwise returns `None` if the result is an error.
+  Option<Ok> ok() {
+    if (_ok != null) {
+      return Option.some(_ok);
+    }
+    return Option.none();
+  }
+
+  /// Converts the `Result` into an `Option` containing the error, if any.
+  /// Otherwise returns `None` if the result is a value.
+  Option<Err> err() {
+    if (_err != null) {
+      return Option.some(_err);
+    }
+    return Option.none();
   }
 
   /// Unwraps a result, yielding the content of an `Ok`.

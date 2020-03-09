@@ -1,27 +1,54 @@
 # oxidized
 
-A Dart package with types similar to those found in the Rust standard library,
-such as the `Result` which represents either a value or an error.
+A Dart package with types similar to those found in Rust, such as the `Result`
+which represents either a value or an error, and `Option` which either contains
+`Some` value or `None`.
+
+## Motivation
+
+The `Option` and `Result` types are akin to the "sum types" found in languages
+such as [OCaml](https://ocaml.org) and [Rust](https://www.rust-lang.org). They
+encourage safer code by making errors and possible "null" values (i.e. `None`) a
+necessary part of the code flow, requiring you to deal with these cases appropriately.
+For an illustration of how this style of coding can prove to be helpful, see the
+excellent tutorial series by Matt Rešetá
+[Flutter TDD Clean Architecture Course – Entities & Use Cases](https://resocoder.com/2019/08/29/flutter-tdd-clean-architecture-course-2-entities-use-cases/)
+in which he uses the `Either` type from the
+[dartz](https://pub.dev/packages/dartz) package to represent either a success or
+a failure. The `Result` type in this package is specifically designed for this
+purpose, making it easy to remember which part is the "success" and which is the
+"failure" (imagine trying to remember "Is the right side the failure? Or was it
+the left?").
 
 ## Usage
 
-A simple usage example:
+A simple example using synchronous I/O to avoid nested futures is shown below.
+For additional examples, see the Dart code in the `example` directory.
 
 ```dart
-import 'package:iron_oxide/iron_oxide.dart';
+import 'dart:io';
+import 'package:oxidized/oxidized.dart';
 
-main() {
-  var awesome = new Awesome();
+Result<String, Exception> readFileSync(String name) {
+  return Result(() {
+    return File(name).readAsStringSync();
+  });
+}
+
+void main() {
+  var result = readFileSync('README.md');
+  result.match((text) {
+    print('first 80 characters of file:\n');
+    print(text.substring(0, 80));
+  }, (err) => print(err));
 }
 ```
 
-## TODO
+## Prior Art
 
-### Option
+The [dartz](https://pub.dev/packages/dartz) package offers many functional
+programming helpers, including the `Either` type, which is similar to `Result`,
+with the difference being that it represents any two types of values.
 
-Like the `Option` type in Rust.
-
-### Result
-
-- `err()`
-- `ok()`
+The [result](https://pub.dev/packages/result) package offers a few basic
+operations and may be adequate for simple cases.
