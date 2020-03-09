@@ -1,6 +1,7 @@
 //
 // Copyright (c) 2020 Nathan Fiedler
 //
+import 'package:equatable/equatable.dart';
 import './option.dart';
 
 /// The type of the result, either `ok` or `err`, useful with `switch`.
@@ -11,32 +12,44 @@ enum ResultType { ok, err }
 /// `Result<Ok, Err>` is the type used for returning and propagating errors. It
 /// is an object with an `ok` value, representing success and containing a
 /// value, and `err`, representing error and containing an error value.
-class Result<Ok, Err> {
-  Ok _ok;
-  Err _err;
+class Result<Ok, Err> extends Equatable {
+  final Ok _ok;
+  final Err _err;
 
   /// Create an `Ok` result with the given value.
-  Result.ok(Ok s) : assert(s != null) {
-    _ok = s;
-  }
+  Result.ok(Ok s)
+      : assert(s != null),
+        _ok = s,
+        _err = null;
 
   /// Create an `Err` result with the given error.
-  Result.err(Err f) : assert(f != null) {
-    _err = f;
-  }
+  Result.err(Err f)
+      : assert(f != null),
+        _ok = null,
+        _err = f;
 
   /// Call the `catching` function and produce a `Result`.
   ///
   /// If the function throws an error, it will be caught and contained in the
   /// returned result. Otherwise, the result of the function will be contained
   /// as the `Ok` value.
-  Result(Ok Function() catching) {
+  factory Result(Ok Function() catching) {
     try {
-      _ok = catching();
+      return Result.ok(catching());
     } catch (e) {
-      _err = e;
+      return Result.err(e);
     }
   }
+
+  @override
+  List<Object> get props => [_ok, _err];
+
+  @override
+  bool get stringify => true;
+
+  @override
+  bool operator ==(other) =>
+      other is Result && other._ok == _ok && other._err == _err;
 
   /// Return the type of this result, either `ok` or `err`.
   ResultType type() {

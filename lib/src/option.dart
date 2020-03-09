@@ -1,6 +1,7 @@
 //
 // Copyright (c) 2020 Nathan Fiedler
 //
+import 'package:equatable/equatable.dart';
 import './result.dart';
 
 /// The type of the option, either `some` or `none`, useful with `switch`.
@@ -11,16 +12,25 @@ enum OptionType { some, none }
 ///
 /// `Option<Some>` is the type used for returning an optional value. It is an
 /// object with a `some` value, and `none`, representing no value.
-class Option<Some> {
-  Some _some;
+class Option<Some> extends Equatable {
+  final Some _some;
 
   /// Create a `Some` option with the given value.
-  Option.some(Some v) : assert(v != null) {
-    _some = v;
-  }
+  Option.some(Some v)
+      : assert(v != null),
+        _some = v;
 
   /// Create a `None` option with no value.
-  Option.none();
+  Option.none() : _some = null;
+
+  @override
+  List<Object> get props => [_some];
+
+  @override
+  bool get stringify => true;
+
+  @override
+  bool operator ==(other) => other is Option && other._some == _some;
 
   /// Return the type of this option, either `some` or `none`.
   OptionType type() {

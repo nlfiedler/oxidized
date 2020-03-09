@@ -25,6 +25,13 @@ void main() {
       expect(() => Option.none().expect('oh no'), throwsException);
     });
 
+    test('equal values are equal', () {
+      expect(Option.some(2) == Option.some(2), isTrue);
+      expect(Option.some(2) == Option.some(3), isFalse);
+      expect(Option.none() == Option.none(), isTrue);
+      expect(Option.some(2) == Option.none(), isFalse);
+    });
+
     test('unwrapping the present', () {
       expect(() => Option.none().unwrap(), throwsException);
       expect(Option.some(2).unwrap(), equals(2));

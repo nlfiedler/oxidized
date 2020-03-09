@@ -38,6 +38,15 @@ void main() {
       expect(Result.err(Exception()).expectErr('oh no'), isA<Exception>());
     });
 
+    test('equal values are equal', () {
+      expect(Result.ok(2) == Result.ok(2), isTrue);
+      expect(Result.ok(2) == Result.ok(3), isFalse);
+      var exc = Exception();
+      expect(Result.err(exc) == Result.err(exc), isTrue);
+      expect(Result.err(Exception()) == Result.err(Exception()), isFalse);
+      expect(Result.ok(2) == Result.err(Exception()), isFalse);
+    });
+
     test('matching results', () {
       var called = 0;
       Result.ok(3).match((v) {
