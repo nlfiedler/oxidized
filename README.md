@@ -50,5 +50,8 @@ The [dartz](https://pub.dev/packages/dartz) package offers many functional
 programming helpers, including the `Either` type, which is similar to `Result`,
 with the difference being that it represents any two types of values.
 
+The [either_option](https://pub.dev/packages/either_option) package has both
+`Either` and `Option` and supports all of the typical functional operations.
+
 The [result](https://pub.dev/packages/result) package offers a few basic
 operations and may be adequate for simple cases.
