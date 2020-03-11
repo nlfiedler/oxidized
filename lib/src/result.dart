@@ -57,25 +57,34 @@ class Result<Ok, Err> extends Equatable {
   }
 
   /// Returns `true` if the result is `Ok`.
-  bool isOk() {
-    return _ok != null;
-  }
+  bool get isOk => _ok != null;
 
   /// Returns `true` if the result is `Err`.
-  bool isErr() {
-    return _err != null;
-  }
+  bool get isErr => _err != null;
 
   /// Invokes either the `okop` or the `errop` depending on the result.
   ///
   /// This is an attempt at providing something similar to the Rust `match`
   /// expression, which makes it easy to get at the value or error, depending on
   /// the result.
+  ///
+  /// See also [when] for another way to achieve the same behavior.
   void match(void Function(Ok) okop, void Function(Err) errop) {
     if (_ok != null) {
       okop(_ok);
     } else {
       errop(_err);
+    }
+  }
+
+  /// Invokes either `ok` or `err` depending on the result.
+  ///
+  /// Identical to [match] except that the arguments are named.
+  void when({void Function(Ok) ok, void Function(Err) err}) {
+    if (_ok != null) {
+      ok(_ok);
+    } else {
+      err(_err);
     }
   }
 

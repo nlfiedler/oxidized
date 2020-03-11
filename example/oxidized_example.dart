@@ -35,6 +35,11 @@ void main() async {
 
   // using the "catching" constructor with futures is also feasible
   var futureResult = await readFile('LICENSE');
-  var text = await futureResult.unwrap();
-  print('\nlength of LICENSE file: ${text.length}');
+  futureResult.when(
+    ok: (text) async {
+      var text = await futureResult.unwrap();
+      print('\nlength of LICENSE file: ${text.length}');
+    },
+    err: (err) => print(err),
+  );
 }
