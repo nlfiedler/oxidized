@@ -5,9 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [2.0.0] - 2020-03-14
+### Added
+- Borrowing from `simple_result`, added `when()` as an alternative to `match()`.
 ### Changed
-- Changed the `is` methods to be getters, breaking the old API.
+- **BREAKING CHANGE:** the various `is` methods are now getters.
 - Extend `Equatable` in both `Option` and `Result`.
 - Override the equals operator (`==`) in both `Option` and `Result`.
 

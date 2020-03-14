@@ -1,6 +1,6 @@
 name: oxidized
 description: A library of Rust-like types, including Option and Result.
-version: 1.0.0
+version: 2.0.0
 homepage: https://github.com/nlfiedler/oxidized
 repository: https://github.com/nlfiedler/oxidized.git
 issue_tracker: https://github.com/nlfiedler/oxidized/issues
