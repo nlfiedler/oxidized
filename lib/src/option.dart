@@ -16,9 +16,9 @@ class Option<Some> extends Equatable {
   final Some _some;
 
   /// Create a `Some` option with the given value.
-  Option.some(Some v)
-      : assert(v != null),
-        _some = v;
+  ///
+  /// Passing a `null` value will result in a `None`.
+  Option.some(Some v) : _some = v;
 
   /// Create a `None` option with no value.
   Option.none() : _some = null;

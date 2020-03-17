@@ -13,6 +13,13 @@ void main() {
       expect(result.type(), equals(ResultType.ok));
     });
 
+    // test('null ok is still okay', () {
+    //   var result = Result.ok(null);
+    //   expect(result.isOk, isTrue);
+    //   expect(result.isErr, isFalse);
+    //   expect(result.type(), equals(ResultType.ok));
+    // });
+
     test('err is not okay', () {
       var result = Result.err(Exception());
       expect(result.isOk, isFalse);
@@ -39,12 +46,13 @@ void main() {
     });
 
     test('equal values are equal', () {
-      expect(Result.ok(2) == Result.ok(2), isTrue);
-      expect(Result.ok(2) == Result.ok(3), isFalse);
+      expect(Result.ok(2), equals(Result.ok(2)));
+      expect(Result.ok(2), isNot(equals(Result.ok(3))));
       var exc = Exception();
-      expect(Result.err(exc) == Result.err(exc), isTrue);
-      expect(Result.err(Exception()) == Result.err(Exception()), isFalse);
-      expect(Result.ok(2) == Result.err(Exception()), isFalse);
+      expect(Result.err(exc), equals(Result.err(exc)));
+      // exceptions do not compare equally?
+      expect(Result.err(Exception()), isNot(equals(Result.err(Exception()))));
+      expect(Result.ok(2), isNot(equals(Result.err(Exception()))));
     });
 
     test('matching results', () {

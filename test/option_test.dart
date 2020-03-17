@@ -13,6 +13,13 @@ void main() {
       expect(option.type(), equals(OptionType.some));
     });
 
+    test('null some is considered none', () {
+      var option = Option.some(null);
+      expect(option.isSome, isFalse);
+      expect(option.isNone, isTrue);
+      expect(option.type(), equals(OptionType.none));
+    });
+
     test('none has nothing', () {
       var option = Option.none();
       expect(option.isSome, isFalse);
