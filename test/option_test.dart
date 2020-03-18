@@ -7,24 +7,18 @@ import 'package:test/test.dart';
 void main() {
   group('Option', () {
     test('some has a value', () {
-      var option = Option.some(1);
-      expect(option.isSome, isTrue);
-      expect(option.isNone, isFalse);
-      expect(option.type(), equals(OptionType.some));
+      expect(Option.some(1), isA<Some>());
+      expect(Some(1), isA<Some>());
     });
 
     test('null some is considered none', () {
       var option = Option.some(null);
-      expect(option.isSome, isFalse);
-      expect(option.isNone, isTrue);
-      expect(option.type(), equals(OptionType.none));
+      expect(option, isA<None>());
     });
 
     test('none has nothing', () {
-      var option = Option.none();
-      expect(option.isSome, isFalse);
-      expect(option.isNone, isTrue);
-      expect(option.type(), equals(OptionType.none));
+      expect(Option.none(), isA<None>());
+      expect(None(), isA<None>());
     });
 
     test('expectations', () {
@@ -81,44 +75,44 @@ void main() {
       expect(Option.some(5).map((v) => v * 2).unwrap(), equals(10));
       expect(Option.some(5).mapOr((v) => v * 2, 2), equals(10));
       expect(Option.some(5).mapOrElse((v) => v * 2, () => 2), equals(10));
-      expect(Option.none().map((v) => fail('oh no')).isNone, isTrue);
+      expect(Option.none().map((v) => fail('oh no')), isA<None>());
     });
 
     test('option as a result', () {
-      expect(Option.some(5).okOr(Exception()).isOk, isTrue);
-      expect(Option.none().okOr(Exception()).isErr, isTrue);
-      expect(Option.some(5).okOrElse(() => fail('oh no')).isOk, isTrue);
-      expect(Option.none().okOrElse(() => Exception()).isErr, isTrue);
+      expect(Option.some(5).okOr(Exception()), isA<Ok>());
+      expect(Option.none().okOr(Exception()), isA<Err>());
+      expect(Option.some(5).okOrElse(() => fail('oh no')), isA<Ok>());
+      expect(Option.none().okOrElse(() => Exception()), isA<Err>());
     });
 
     test('filtering options', () {
-      expect(Option.some(2).filter((v) => v % 2 == 0).isSome, isTrue);
-      expect(Option.some(3).filter((v) => v % 2 == 0).isNone, isTrue);
-      expect(Option.none().filter((v) => fail('oh no')).isNone, isTrue);
+      expect(Option.some(2).filter((v) => v % 2 == 0), isA<Some>());
+      expect(Option.some(3).filter((v) => v % 2 == 0), isA<None>());
+      expect(Option.none().filter((v) => fail('oh no')), isA<None>());
     });
 
     test('this and that', () {
-      expect(Option.some(2).and(Option.some(1)).isSome, isTrue);
-      expect(Option.some(2).and(Option.none()).isNone, isTrue);
-      expect(Option.none().and(Option.some(2)).isNone, isTrue);
+      expect(Option.some(2).and(Option.some(1)), isA<Some>());
+      expect(Option.some(2).and(Option.none()), isA<None>());
+      expect(Option.none().and(Option.some(2)), isA<None>());
       expect(Option.some(2).andThen((v) => Option.some(v * 2)).unwrap(),
           equals(4));
-      expect(Option.none().andThen((v) => fail('oh no')).isNone, isTrue);
+      expect(Option.none().andThen((v) => fail('oh no')), isA<None>());
     });
 
     test('this or that', () {
-      expect(Option.some(2).or(Option.none()).isSome, isTrue);
-      expect(Option.none().or(Option.some(2)).isSome, isTrue);
-      expect(Option.some(2).orElse(() => fail('oh no')).isSome, isTrue);
-      expect(Option.none().orElse(() => Option.none()).isNone, isTrue);
-      expect(Option.none().orElse(() => Option.some(1)).isSome, isTrue);
+      expect(Option.some(2).or(Option.none()), isA<Some>());
+      expect(Option.none().or(Option.some(2)), isA<Some>());
+      expect(Option.some(2).orElse(() => fail('oh no')), isA<Some>());
+      expect(Option.none().orElse(() => Option.none()), isA<None>());
+      expect(Option.none().orElse(() => Option.some(1)), isA<Some>());
     });
 
     test('either this or that', () {
-      expect(Option.some(2).xor(Option.none()).isSome, isTrue);
-      expect(Option.none().xor(Option.some(2)).isSome, isTrue);
-      expect(Option.none().xor(Option.none()).isNone, isTrue);
-      expect(Option.some(1).xor(Option.some(2)).isNone, isTrue);
+      expect(Option.some(2).xor(Option.none()), isA<Some>());
+      expect(Option.none().xor(Option.some(2)), isA<Some>());
+      expect(Option.none().xor(Option.none()), isA<None>());
+      expect(Option.some(1).xor(Option.some(2)), isA<None>());
     });
   });
 }

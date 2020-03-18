@@ -2,13 +2,13 @@ import 'dart:io';
 import 'package:oxidized/oxidized.dart';
 
 Result<String, Exception> readFileSync(String name) {
-  return Result(() {
+  return Result.of(() {
     return File(name).readAsStringSync();
   });
 }
 
 Future<Result<Future<String>, Exception>> readFile(String name) async {
-  return Result(() async {
+  return Result.of(() async {
     return await File(name).readAsString();
   });
 }
@@ -16,15 +16,12 @@ Future<Result<Future<String>, Exception>> readFile(String name) async {
 void main() async {
   var result = readFileSync('README.md');
 
-  // you can use switch like so
-  switch (result.type()) {
-    case ResultType.err:
-      print('oh no, unable to read the file!');
-      break;
-    case ResultType.ok:
-      print('read the file successfully');
-      // it is safe to call .unwrap() here
-      break;
+  // you can use `is` like so
+  if (result is Err) {
+    print('oh no, unable to read the file!');
+  } else {
+    print('read the file successfully');
+    // it is safe to call .unwrap() here
   }
 
   // or you can use the match function

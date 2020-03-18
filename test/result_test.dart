@@ -7,35 +7,35 @@ import 'package:test/test.dart';
 void main() {
   group('Result', () {
     test('ok is okay', () {
-      var result = Result.ok(1);
-      expect(result.isOk, isTrue);
-      expect(result.isErr, isFalse);
-      expect(result.type(), equals(ResultType.ok));
+      expect(Result.ok(1), isA<Ok>());
+      expect(Ok(1), isA<Ok>());
     });
 
-    // test('null ok is still okay', () {
-    //   var result = Result.ok(null);
-    //   expect(result.isOk, isTrue);
-    //   expect(result.isErr, isFalse);
-    //   expect(result.type(), equals(ResultType.ok));
-    // });
+    test('null ok is still okay', () {
+      var result = Result.ok(null);
+      expect(result, isA<Ok>());
+      expect(result, isNot(isA<Err>()));
+    });
 
     test('err is not okay', () {
-      var result = Result.err(Exception());
-      expect(result.isOk, isFalse);
-      expect(result.isErr, isTrue);
-      expect(result.type(), equals(ResultType.err));
+      expect(Result.err(Exception()), isA<Err>());
+      expect(Err(Exception()), isA<Err>());
+    });
+
+    test('null err is still an error', () {
+      expect(Result.err(null), isA<Err>());
+      expect(Err(null), isA<Err>());
     });
 
     test('catching ok values', () {
-      var result = Result(() => 2);
-      expect(result.isOk, isTrue);
+      var result = Result.of(() => 2);
+      expect(result, isA<Ok>());
       expect(result.unwrap(), equals(2));
     });
 
     test('catching exceptions', () {
-      var result = Result(() => throw Exception());
-      expect(result.isErr, isTrue);
+      var result = Result.of(() => throw Exception());
+      expect(result, isA<Err>());
     });
 
     test('expectations', () {
@@ -93,7 +93,7 @@ void main() {
       expect(Result.ok(5).map((v) => v * 2).unwrap(), equals(10));
       expect(Result.ok(5).mapOr((v) => v * 2, 2), equals(10));
       expect(Result.ok(5).mapOrElse((v) => v * 2, (e) => 2), equals(10));
-      expect(Result.err(Exception()).map((v) => fail('oh no')).isErr, isTrue);
+      expect(Result.err(Exception()).map((v) => fail('oh no')), isA<Err>());
     });
 
     test('mapping errors', () {
@@ -101,34 +101,35 @@ void main() {
       var called = 0;
       Result.err(Exception()).mapErr((e) => called++);
       expect(called, equals(1));
-      expect(Result.err(Exception()).map((e) => Exception()).isErr, isTrue);
+      expect(Result.err(Exception()).map((e) => Exception()), isA<Err>());
       expect(Result.err(Exception()).mapOr((v) => fail('oh no'), 2), equals(2));
       expect(Result.err(Exception()).mapOrElse((v) => fail('oh no'), (e) => 2),
           equals(2));
     });
 
     test('result as an option', () {
-      expect(Result.ok(5).ok().isSome, isTrue);
-      expect(Result.err(Exception()).ok().isNone, isTrue);
-      expect(Result.ok(5).err().isNone, isTrue);
-      expect(Result.err(Exception()).err().isSome, isTrue);
+      expect(Result.ok(5).ok(), isA<Some>());
+      expect(Result.err(Exception()).ok(), isA<None>());
+      expect(Result.ok(5).err(), isA<None>());
+      expect(Result.err(Exception()).err(), isA<Some>());
     });
 
     test('this and that', () {
-      expect(Result.ok(2).and(Result.ok(1)).isOk, isTrue);
-      expect(Result.ok(2).and(Result.err(Exception())).isErr, isTrue);
-      expect(Result.err(Exception()).and(Result.ok(2)).isErr, isTrue);
+      expect(Result.ok(2).and(Result.ok(1)), isA<Ok>());
+      expect(Result.ok(2).and(Result.err(Exception())), isA<Err>());
+      expect(Result.err(Exception()).and(Result.ok(2)), isA<Err>());
       expect(Result.ok(2).andThen((v) => Result.ok(v * 2)).unwrap(), equals(4));
-      expect(
-          Result.err(Exception()).andThen((v) => fail('oh no')).isErr, isTrue);
+      expect(Result.err(Exception()).andThen((v) => fail('oh no')), isA<Err>());
     });
 
     test('this or that', () {
-      expect(Result.ok(2).or(Result.err(Exception())).isOk, isTrue);
-      expect(Result.err(Exception()).or(Result.ok(2)).isOk, isTrue);
-      expect(Result.ok(2).orElse((err) => fail('oh no')).isOk, isTrue);
-      expect(Result.err(Exception()).orElse((err) => Result.err(err)).isErr,
-          isTrue);
+      expect(Result.ok(2).or(Result.err(Exception())), isA<Ok>());
+      expect(Result.err(Exception()).or(Result.ok(2)), isA<Ok>());
+      expect(Result.ok(2).orElse((err) => fail('oh no')), isA<Ok>());
+      expect(
+        Result.err(Exception()).orElse((err) => Result.err(err)),
+        isA<Err>(),
+      );
     });
 
     test('unwrapping the present', () {

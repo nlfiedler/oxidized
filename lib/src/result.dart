@@ -4,63 +4,32 @@
 import 'package:equatable/equatable.dart';
 import './option.dart';
 
-/// The type of the result, either `ok` or `err`, useful with `switch`.
-enum ResultType { ok, err }
-
 /// Result is a type that represents either success (`Ok`) or failure (`Err`).
 ///
-/// `Result<Ok, Err>` is the type used for returning and propagating errors. It
-/// is an object with an `ok` value, representing success and containing a
-/// value, and `err`, representing error and containing an error value.
-class Result<Ok, Err> extends Equatable {
-  final Ok _ok;
-  final Err _err;
+/// `Result<T, E>` is the type used for returning and propagating errors. It is
+/// an object with an `Ok` value, representing success and containing a value,
+/// and `Err`, representing error and containing an error value.
+abstract class Result<T, E> extends Equatable {
+  Result();
 
   /// Create an `Ok` result with the given value.
-  Result.ok(Ok s)
-      : assert(s != null),
-        _ok = s,
-        _err = null;
+  factory Result.ok(T s) => Ok(s);
 
   /// Create an `Err` result with the given error.
-  Result.err(Err f)
-      : assert(f != null),
-        _ok = null,
-        _err = f;
+  factory Result.err(E err) => Err(err);
 
   /// Call the `catching` function and produce a `Result`.
   ///
   /// If the function throws an error, it will be caught and contained in the
   /// returned result. Otherwise, the result of the function will be contained
   /// as the `Ok` value.
-  factory Result(Ok Function() catching) {
+  factory Result.of(T Function() catching) {
     try {
       return Result.ok(catching());
     } catch (e) {
       return Result.err(e);
     }
   }
-
-  @override
-  List<Object> get props => [_ok, _err];
-
-  @override
-  bool get stringify => true;
-
-  @override
-  bool operator ==(other) =>
-      other is Result && other._ok == _ok && other._err == _err;
-
-  /// Return the type of this result, either `ok` or `err`.
-  ResultType type() {
-    return _ok != null ? ResultType.ok : ResultType.err;
-  }
-
-  /// Returns `true` if the result is `Ok`.
-  bool get isOk => _ok != null;
-
-  /// Returns `true` if the result is `Err`.
-  bool get isErr => _err != null;
 
   /// Invokes either the `okop` or the `errop` depending on the result.
   ///
@@ -69,177 +38,227 @@ class Result<Ok, Err> extends Equatable {
   /// the result.
   ///
   /// See also [when] for another way to achieve the same behavior.
-  void match(void Function(Ok) okop, void Function(Err) errop) {
-    if (_ok != null) {
-      okop(_ok);
-    } else {
-      errop(_err);
-    }
-  }
+  void match(void Function(T) okop, void Function(E) errop);
 
   /// Invokes either `ok` or `err` depending on the result.
   ///
   /// Identical to [match] except that the arguments are named.
-  void when({void Function(Ok) ok, void Function(Err) err}) {
-    if (_ok != null) {
-      ok(_ok);
-    } else {
-      err(_err);
-    }
-  }
+  void when({void Function(T) ok, void Function(E) err});
 
   /// Converts the `Result` into an `Option` containing the value, if any.
   /// Otherwise returns `None` if the result is an error.
-  Option<Ok> ok() {
-    if (_ok != null) {
-      return Option.some(_ok);
-    }
-    return Option.none();
-  }
+  Option<T> ok();
 
   /// Converts the `Result` into an `Option` containing the error, if any.
   /// Otherwise returns `None` if the result is a value.
-  Option<Err> err() {
-    if (_err != null) {
-      return Option.some(_err);
-    }
-    return Option.none();
-  }
+  Option<E> err();
 
   /// Unwraps a result, yielding the content of an `Ok`.
   ///
   /// Throws an `Exception` if the value is an `Err`, with the passed message.
-  Ok expect(String msg) {
-    if (_ok != null) {
-      return _ok;
-    } else {
-      throw Exception(msg);
-    }
-  }
+  T expect(String msg);
 
   /// Unwraps a result, yielding the content of an `Err`.
   ///
   /// Throws an `Exception` if the value is an `Ok`, with the passed message.
-  Err expectErr(String msg) {
-    if (_ok != null) {
-      throw Exception(msg);
-    } else {
-      return _err;
-    }
-  }
+  E expectErr(String msg);
 
-  /// Maps a `Result<Ok, Err>` to `Result<NewOk, Err>` by applying a function to
-  /// a contained `Ok` value, leaving an `Err` value untouched.
-  Result<NewOk, Err> map<NewOk>(NewOk Function(Ok) op) {
-    if (_ok != null) {
-      return Result.ok(op(_ok));
-    } else {
-      return Result.err(_err);
-    }
-  }
+  /// Maps a `Result<T, E>` to `Result<U, E>` by applying a function to a
+  /// contained `Ok` value, leaving an `Err` value untouched.
+  Result<U, E> map<U>(U Function(T) op);
 
-  /// Maps a `Result<Ok, Err>` to `Result<Ok, NewErr>` by applying a function to
+  /// Maps a `Result<T, E>` to `Result<T, F>` by applying a function to
   /// a contained `Err` value, leaving an `Ok` value untouched.
   ///
   /// This function can be used to pass through a successful result while
   /// handling an error.
-  Result<Ok, NewErr> mapErr<NewErr>(NewErr Function(Err) op) {
-    if (_err != null) {
-      return Result.err(op(_err));
-    } else {
-      return Result.ok(_ok);
-    }
-  }
+  Result<T, F> mapErr<F>(F Function(E) op);
 
   /// Applies a function to the contained value (if any), or returns the
   /// provided default (if not).
-  NewOk mapOr<NewOk>(NewOk Function(Ok) op, NewOk opt) {
-    if (_ok != null) {
-      return op(_ok);
-    } else {
-      return opt;
-    }
-  }
+  U mapOr<U>(U Function(T) op, U opt);
 
-  /// Maps a `Result<Ok, Err>` to `NewOk` by applying a function to a contained
+  /// Maps a `Result<T, E>` to `U` by applying a function to a contained
   /// `Ok` value, or a fallback function to a contained `Err` value.
-  NewOk mapOrElse<NewOk>(NewOk Function(Ok) op, NewOk Function(Err) errOp) {
-    if (_ok != null) {
-      return op(_ok);
-    } else {
-      return errOp(_err);
-    }
-  }
+  U mapOrElse<U>(U Function(T) op, U Function(E) errOp);
 
   /// Returns `res` if the result is `Ok`, otherwise returns `this`.
-  Result<Ok, Err> and(Result<Ok, Err> res) {
-    if (_ok != null) {
-      return res;
-    } else {
-      return this;
-    }
-  }
+  Result<T, E> and(Result<T, E> res);
 
   /// Calls `op` with the `Ok` value if the result is `Ok`, otherwise returns
   /// `this`.
-  Result<Ok, Err> andThen(Result<Ok, Err> Function(Ok) op) {
-    if (_ok != null) {
-      return op(_ok);
-    } else {
-      return this;
-    }
-  }
+  Result<T, E> andThen(Result<T, E> Function(T) op);
 
   /// Returns `res` if the result is an `Err`, otherwise returns `this`.
-  Result<Ok, Err> or(Result<Ok, Err> res) {
-    if (_ok != null) {
-      return this;
-    } else {
-      return res;
-    }
-  }
+  Result<T, E> or(Result<T, E> res);
 
   /// Calls `op` with the `Err` value if the result is `Err`, otherwise returns
   /// `this`.
-  Result<Ok, Err> orElse(Result<Ok, Err> Function(Err) op) {
-    if (_ok != null) {
-      return this;
-    } else {
-      return op(_err);
-    }
-  }
+  Result<T, E> orElse(Result<T, E> Function(E) op);
 
   /// Unwraps a result, yielding the content of an `Ok`.
   ///
   /// Throws the contained error if this result is an `Err`.
-  Ok unwrap() {
-    if (_ok != null) {
-      return _ok;
-    } else {
-      throw _err;
-    }
-  }
+  T unwrap();
 
   /// Unwraps a result, yielding the content of an `Err`.
   ///
   /// Throws an exception if the value is an `Ok`, with a custom message
   /// provided by calling `toString()` on the `Ok`'s value.
-  Err unwrapErr() {
-    if (_ok != null) {
-      throw Exception(_ok.toString());
-    } else {
-      return _err;
-    }
-  }
+  E unwrapErr();
 
   /// Unwraps a result, yielding the content of an `Ok`. Else, it returns `opt`.
-  Ok unwrapOr(Ok opt) {
-    return _ok ?? opt;
-  }
+  T unwrapOr(T opt);
 
   /// Unwraps a result, yielding the content of an `Ok`. If the value is an
   /// `Err` then it calls `op` with its value.
-  Ok unwrapOrElse(Ok Function(Err) op) {
-    return _ok ?? op(_err);
+  T unwrapOrElse(T Function(E) op);
+}
+
+class Ok<T, E> extends Result<T, E> {
+  final T _ok;
+
+  /// Create an `Ok` result with the given value.
+  Ok(T s) : _ok = s;
+
+  @override
+  List<Object> get props => [_ok];
+
+  @override
+  bool get stringify => true;
+
+  @override
+  bool operator ==(other) => other is Ok && other._ok == _ok;
+
+  @override
+  void match(void Function(T) okop, void Function(E) errop) => okop(_ok);
+
+  @override
+  void when({void Function(T) ok, void Function(E) err}) => ok(_ok);
+
+  @override
+  Option<T> ok() => Option.some(_ok);
+
+  @override
+  Option<E> err() => Option.none();
+
+  @override
+  T expect(String msg) => _ok;
+
+  @override
+  E expectErr(String msg) {
+    throw Exception(msg);
   }
+
+  @override
+  Result<U, E> map<U>(U Function(T) op) => Result.ok(op(_ok));
+
+  @override
+  Result<T, F> mapErr<F>(F Function(E) op) => Result.ok(_ok);
+
+  @override
+  U mapOr<U>(U Function(T) op, U opt) => op(_ok);
+
+  @override
+  U mapOrElse<U>(U Function(T) op, U Function(E) errOp) => op(_ok);
+
+  @override
+  Result<T, E> and(Result<T, E> res) => res;
+
+  @override
+  Result<T, E> andThen(Result<T, E> Function(T) op) => op(_ok);
+
+  @override
+  Result<T, E> or(Result<T, E> res) => this;
+
+  @override
+  Result<T, E> orElse(Result<T, E> Function(E) op) => this;
+
+  @override
+  T unwrap() => _ok;
+
+  @override
+  E unwrapErr() {
+    throw Exception(_ok.toString());
+  }
+
+  @override
+  T unwrapOr(T opt) => _ok;
+
+  @override
+  T unwrapOrElse(T Function(E) op) => _ok;
+}
+
+class Err<T, E> extends Result<T, E> {
+  final E _err;
+
+  /// Create an `Err` result with the given error.
+  Err(E err) : _err = err;
+
+  @override
+  List<Object> get props => [_err];
+
+  @override
+  bool get stringify => true;
+
+  @override
+  bool operator ==(other) => other is Err && other._err == _err;
+
+  @override
+  void match(void Function(T) okop, void Function(E) errop) => errop(_err);
+
+  @override
+  void when({void Function(T) ok, void Function(E) err}) => err(_err);
+
+  @override
+  Option<T> ok() => Option.none();
+
+  @override
+  Option<E> err() => Option.some(_err);
+
+  @override
+  T expect(String msg) {
+    throw Exception(msg);
+  }
+
+  @override
+  E expectErr(String msg) => _err;
+
+  @override
+  Result<U, E> map<U>(U Function(T) op) => Result.err(_err);
+
+  @override
+  Result<T, F> mapErr<F>(F Function(E) op) => Result.err(op(_err));
+
+  @override
+  U mapOr<U>(U Function(T) op, U opt) => opt;
+
+  @override
+  U mapOrElse<U>(U Function(T) op, U Function(E) errOp) => errOp(_err);
+
+  @override
+  Result<T, E> and(Result<T, E> res) => this;
+
+  @override
+  Result<T, E> andThen(Result<T, E> Function(T) op) => this;
+
+  @override
+  Result<T, E> or(Result<T, E> res) => res;
+
+  @override
+  Result<T, E> orElse(Result<T, E> Function(E) op) => op(_err);
+
+  @override
+  T unwrap() {
+    throw _err;
+  }
+
+  @override
+  E unwrapErr() => _err;
+
+  @override
+  T unwrapOr(T opt) => opt;
+
+  @override
+  T unwrapOrElse(T Function(E) op) => op(_err);
 }

@@ -30,7 +30,7 @@ import 'dart:io';
 import 'package:oxidized/oxidized.dart';
 
 Result<String, Exception> readFileSync(String name) {
-  return Result(() {
+  return Result.of(() {
     return File(name).readAsStringSync();
   });
 }
