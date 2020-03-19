@@ -10,7 +10,7 @@ import './result.dart';
 /// `Option<T>` is the type used for returning an optional value. It is an
 /// object with a `Some` value, and `None`, representing no value.
 abstract class Option<T> extends Equatable {
-  Option();
+  const Option();
 
   /// Create a `Some` option with the given value.
   ///
@@ -97,6 +97,8 @@ abstract class Option<T> extends Equatable {
   Option<T> xor(Option<T> optb);
 }
 
+/// Type `Some<T>` contains a value. You can construct a `Some` using the
+/// `Some()` constructor or by calling the `Option.some()` factory constructor.
 class Some<T> extends Option<T> {
   final T _some;
 
@@ -168,9 +170,12 @@ class Some<T> extends Option<T> {
   Option<T> xor(Option<T> optb) => optb is None ? this : Option.none();
 }
 
+/// Type `None<T>` does not contain any value. You can construct a `None` using
+/// the `None()` constructor or by calling the `Option.none()` factory
+/// constructor.
 class None<T> extends Option<T> {
   /// Create a `None` option with no value.
-  None();
+  const None();
 
   @override
   List<Object> get props => [];

@@ -19,6 +19,7 @@ void main() {
     test('none has nothing', () {
       expect(Option.none(), isA<None>());
       expect(None(), isA<None>());
+      expect(None(), equals(None()));
     });
 
     test('expectations', () {
