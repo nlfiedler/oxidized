@@ -25,9 +25,9 @@ abstract class Result<T, E> extends Equatable {
   /// as the `Ok` value.
   factory Result.of(T Function() catching) {
     try {
-      return Result.ok(catching());
+      return Ok(catching());
     } catch (e) {
-      return Result.err(e);
+      return Err(e);
     }
   }
 

@@ -44,15 +44,15 @@
 /// exception). Using `Result<T, E>` encourages taking a direct approach to
 /// dealing with the result, _without_ worrying about forgetting to `catch` all
 /// possible exceptions.
-/// 
+///
 /// ## Example
-/// 
+///
 /// Again, borrowing from the Rust API documentation, the function below parses
 /// some simple input and returns the result.
-/// 
+///
 /// ```dart
 /// enum Version { version1, version2 }
-/// 
+///
 /// Result<Version, Exception> parse_version(List<int> header) {
 ///   switch (header[0]) {
 ///     case 0:
@@ -65,7 +65,7 @@
 ///       return Err(Exception('invalid version'));
 ///   }
 /// }
-/// 
+///
 /// void main() {
 ///   final version = parse_version([1, 2, 3, 4]);
 ///   version.when(

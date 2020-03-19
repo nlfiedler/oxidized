@@ -20,6 +20,7 @@ void main() {
       expect(Option.none(), isA<None>());
       expect(None(), isA<None>());
       expect(None(), equals(None()));
+      expect(None() == None(), isTrue);
     });
 
     test('expectations', () {
