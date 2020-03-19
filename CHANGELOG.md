@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [3.0.0] - 2020-03-18
 ### Changed
 - **BREAKING CHANGES:** see below for the details.
 - The `Result` "ok" and "error" values are full-fledged classes now.
@@ -13,7 +13,7 @@ This file follows the convention described at
 - `Option.isSome()` and `Option.isNone()` are gone, use `is Some` and `is None`.
 - `Result.isOk()` and `Result.isErr()` are gone, use `is Ok` and `is Err`.
 - The default `Result` constructor has been renamed to `of()` instead.
-- Passing `null` to the `Some` constructor (or `Option.some()`) will yield a `None`.
+- Passing `null` to the `Option.some()` factory constructor will yield a `None`.
 - Both the `Ok` and `Err` subclasses of `Result` allow for null arguments.
 
 ## [2.0.0] - 2020-03-14

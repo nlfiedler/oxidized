@@ -115,9 +115,10 @@ abstract class Result<T, E> extends Equatable {
   T unwrapOrElse(T Function(E) op);
 }
 
-/// An `Ok<T, E>` represents the successful value for an operation that returns
-/// a `Result<T, E>`. You can create an `Ok` using either the `Ok()` constructor
-/// or the `Result.ok()` factory constructor.
+/// An `Ok<T, E>` is a `Result` that represents the successful value.
+///
+/// You can create an `Ok` using either the `Ok()` constructor or the
+/// `Result.ok()` factory constructor.
 class Ok<T, E> extends Result<T, E> {
   final T _ok;
 
@@ -192,9 +193,10 @@ class Ok<T, E> extends Result<T, E> {
   T unwrapOrElse(T Function(E) op) => _ok;
 }
 
-/// An `Err<T, E>` represents the failure for an operation that returns a
-/// `Result<T, E>`. You can create an `Err` using either the `Err(E)`
-/// constructor or the `Result.err(E)` factory constructor.
+/// An `Err<T, E>` is a `Result` that represents a failure.
+///
+/// You can create an `Err` using either the `Err(E)` constructor or the
+/// `Result.err(E)` factory constructor.
 class Err<T, E> extends Result<T, E> {
   final E _err;
 

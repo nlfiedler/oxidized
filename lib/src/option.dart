@@ -97,8 +97,12 @@ abstract class Option<T> extends Equatable {
   Option<T> xor(Option<T> optb);
 }
 
-/// Type `Some<T>` contains a value. You can construct a `Some` using the
-/// `Some()` constructor or by calling the `Option.some()` factory constructor.
+/// Type `Some<T>` is an `Option` that contains a value.
+///
+/// You can construct a `Some` using the `Some()` constructor or by calling the
+/// `Option.some()` factory constructor. The advantage of using the factory
+/// constructor on `Option` is that it will yield a `None` if the passed value
+/// is `null`, which can be helpful.
 class Some<T> extends Option<T> {
   final T _some;
 
@@ -170,9 +174,11 @@ class Some<T> extends Option<T> {
   Option<T> xor(Option<T> optb) => optb is None ? this : Option.none();
 }
 
-/// Type `None<T>` does not contain any value. You can construct a `None` using
-/// the `None()` constructor or by calling the `Option.none()` factory
-/// constructor.
+/// Type `None<T>` is an `Option` that does not contain any value.
+///
+/// You can construct a `None` using the `None()` constructor or by calling the
+/// `Option.none()` factory constructor. A `None` is also returned when a `null`
+/// is passed to the `Option.some()` factory constructor.
 class None<T> extends Option<T> {
   /// Create a `None` option with no value.
   const None();
