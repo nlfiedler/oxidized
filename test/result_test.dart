@@ -89,6 +89,23 @@ void main() {
       expect(called, equals(2));
     });
 
+    test('folding results', () {
+      expect(
+        Ok(2).fold(
+          (v) => v * 3,
+          (e) => e,
+        ),
+        equals(Ok(6)),
+      );
+      expect(
+        Err(3).fold(
+          (v) => v,
+          (e) => e * 3,
+        ),
+        equals(Err(9)),
+      );
+    });
+
     test('mapping values', () {
       expect(Result.ok(5).map((v) => v * 2).unwrap(), equals(10));
       expect(Result.ok(5).mapOr((v) => v * 2, 2), equals(10));

@@ -45,6 +45,11 @@ abstract class Result<T, E> extends Equatable {
   /// Identical to [match] except that the arguments are named.
   void when({void Function(T) ok, void Function(E) err});
 
+  /// Invoke either the `ok` or the `err` function based on the result.
+  ///
+  /// This is a combination of the [map()] and [mapErr()] functions.
+  Result<U, F> fold<U, F>(U Function(T) ok, F Function(E) err);
+
   /// Converts the `Result` into an `Option` containing the value, if any.
   /// Otherwise returns `None` if the result is an error.
   Option<T> ok();
@@ -141,6 +146,9 @@ class Ok<T, E> extends Result<T, E> {
   void when({void Function(T) ok, void Function(E) err}) => ok(_ok);
 
   @override
+  Result<U, F> fold<U, F>(U Function(T) ok, F Function(E) err) => Ok(ok(_ok));
+
+  @override
   Option<T> ok() => Option.some(_ok);
 
   @override
@@ -155,10 +163,10 @@ class Ok<T, E> extends Result<T, E> {
   }
 
   @override
-  Result<U, E> map<U>(U Function(T) op) => Result.ok(op(_ok));
+  Result<U, E> map<U>(U Function(T) op) => Ok(op(_ok));
 
   @override
-  Result<T, F> mapErr<F>(F Function(E) op) => Result.ok(_ok);
+  Result<T, F> mapErr<F>(F Function(E) op) => Ok(_ok);
 
   @override
   U mapOr<U>(U Function(T) op, U opt) => op(_ok);
@@ -219,6 +227,10 @@ class Err<T, E> extends Result<T, E> {
   void when({void Function(T) ok, void Function(E) err}) => err(_err);
 
   @override
+  Result<U, F> fold<U, F>(U Function(T) ok, F Function(E) err) =>
+      Err(err(_err));
+
+  @override
   Option<T> ok() => Option.none();
 
   @override
@@ -233,10 +245,10 @@ class Err<T, E> extends Result<T, E> {
   E expectErr(String msg) => _err;
 
   @override
-  Result<U, E> map<U>(U Function(T) op) => Result.err(_err);
+  Result<U, E> map<U>(U Function(T) op) => Err(_err);
 
   @override
-  Result<T, F> mapErr<F>(F Function(E) op) => Result.err(op(_err));
+  Result<T, F> mapErr<F>(F Function(E) op) => Err(op(_err));
 
   @override
   U mapOr<U>(U Function(T) op, U opt) => opt;
