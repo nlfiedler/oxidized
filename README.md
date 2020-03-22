@@ -56,9 +56,8 @@ The [either_option](https://pub.dev/packages/either_option) package has both
 The [result](https://pub.dev/packages/result) package offers a few basic
 operations and may be adequate for simple cases.
 
-While not quite "prior art" since it was published on the same day,
-[rust_like_result](https://pub.dev/packages/rust_like_result) offers a
+The [rust_like_result](https://pub.dev/packages/rust_like_result) offers a
 simple `Result` type similar to the one in Rust.
 
 The [simple_result](https://pub.dev/packages/simple_result) package provides
-a similar `Result` type.
+a similar `Result` type based on the type of the same name in Swift.
