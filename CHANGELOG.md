@@ -7,7 +7,11 @@ This file follows the convention described at
 
 ## [4.1.0] - 2021-03-09
 ### Changed
-- Returning values to `match()` and `when()` functions on `Result` and `Option`.
+- lemunozm: return values added to `match()`, `when()` in `Result`, `Option`.
+
+## [4.0.0] - 2020-03-03
+### Changed
+- **BREAKING CHANGE:** migrated to null safety and Dart SDK 2.12.
 
 ## [3.1.0] - 2020-03-22
 ### Added

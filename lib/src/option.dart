@@ -15,7 +15,7 @@ abstract class Option<T> extends Equatable {
   /// Create a `Some` option with the given value.
   ///
   /// Passing a `null` value will result in a `None`.
-  factory Option.some(T v) {
+  factory Option.some(T? v) {
     return v == null ? None() : Some(v);
   }
 
@@ -33,7 +33,7 @@ abstract class Option<T> extends Equatable {
   /// Invokes either `some` or `none` depending on the option.
   ///
   /// Identical to [match] except that the arguments are named.
-  R when<R>({R Function(T) some, R Function() none});
+  R when<R>({required R Function(T) some, required R Function() none});
 
   /// Unwraps an option, yielding the content of a `Some`.
   ///
@@ -112,7 +112,7 @@ class Some<T> extends Option<T> {
         _some = v;
 
   @override
-  List<Object> get props => [_some];
+  List<Object?> get props => [_some];
 
   @override
   bool get stringify => true;
@@ -124,7 +124,8 @@ class Some<T> extends Option<T> {
   R match<R>(R Function(T) someop, R Function() noneop) => someop(_some);
 
   @override
-  R when<R>({R Function(T) some, R Function() none}) => some(_some);
+  R when<R>({required R Function(T) some, required R Function() none}) =>
+      some(_some);
 
   @override
   T expect(String msg) => _some;
@@ -196,7 +197,8 @@ class None<T> extends Option<T> {
   R match<R>(R Function(T) someop, R Function() noneop) => noneop();
 
   @override
-  R when<R>({R Function(T) some, R Function() none}) => none();
+  R when<R>({required R Function(T) some, required R Function() none}) =>
+      none();
 
   @override
   T expect(String msg) {

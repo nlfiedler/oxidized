@@ -27,7 +27,7 @@ abstract class Result<T, E> extends Equatable {
     try {
       return Ok(catching());
     } catch (e) {
-      return Err(e);
+      return Err(e as E);
     }
   }
 
@@ -43,7 +43,7 @@ abstract class Result<T, E> extends Equatable {
   /// Invokes either `ok` or `err` depending on the result.
   ///
   /// Identical to [match] except that the arguments are named.
-  R when<R>({R Function(T) ok, R Function(E) err});
+  R when<R>({required R Function(T) ok, required R Function(E) err});
 
   /// Invoke either the `ok` or the `err` function based on the result.
   ///
@@ -131,7 +131,7 @@ class Ok<T, E> extends Result<T, E> {
   Ok(T s) : _ok = s;
 
   @override
-  List<Object> get props => [_ok];
+  List<Object?> get props => [_ok];
 
   @override
   bool get stringify => true;
@@ -143,7 +143,7 @@ class Ok<T, E> extends Result<T, E> {
   R match<R>(R Function(T) okop, R Function(E) errop) => okop(_ok);
 
   @override
-  R when<R>({R Function(T) ok, R Function(E) err}) => ok(_ok);
+  R when<R>({required R Function(T) ok, required R Function(E) err}) => ok(_ok);
 
   @override
   Result<U, F> fold<U, F>(U Function(T) ok, F Function(E) err) => Ok(ok(_ok));
@@ -212,7 +212,7 @@ class Err<T, E> extends Result<T, E> {
   Err(E err) : _err = err;
 
   @override
-  List<Object> get props => [_err];
+  List<Object?> get props => [_err];
 
   @override
   bool get stringify => true;
@@ -224,7 +224,8 @@ class Err<T, E> extends Result<T, E> {
   R match<R>(R Function(T) okop, R Function(E) errop) => errop(_err);
 
   @override
-  R when<R>({R Function(T) ok, R Function(E) err}) => err(_err);
+  R when<R>({required R Function(T) ok, required R Function(E) err}) =>
+      err(_err);
 
   @override
   Result<U, F> fold<U, F>(U Function(T) ok, F Function(E) err) =>
@@ -270,7 +271,7 @@ class Err<T, E> extends Result<T, E> {
 
   @override
   T unwrap() {
-    throw _err;
+    throw _err as Object;
   }
 
   @override

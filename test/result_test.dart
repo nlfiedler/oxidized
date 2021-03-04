@@ -144,13 +144,14 @@ void main() {
       expect(Result.ok(2).and(Result.err(Exception())), isA<Err>());
       expect(Result.err(Exception()).and(Result.ok(2)), isA<Err>());
       expect(Result.ok(2).andThen((v) => Result.ok(v * 2)).unwrap(), equals(4));
-      expect(Result.err(Exception()).andThen((v) => fail('oh no')), isA<Err>());
+      expect(
+          Result.err(Exception()).andThen(((v) => fail('oh no'))), isA<Err>());
     });
 
     test('this or that', () {
       expect(Result.ok(2).or(Result.err(Exception())), isA<Ok>());
       expect(Result.err(Exception()).or(Result.ok(2)), isA<Ok>());
-      expect(Result.ok(2).orElse((err) => fail('oh no')), isA<Ok>());
+      expect(Result.ok(2).orElse(((err) => fail('oh no'))), isA<Ok>());
       expect(
         Result.err(Exception()).orElse((err) => Result.err(err)),
         isA<Err>(),

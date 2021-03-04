@@ -90,7 +90,7 @@ void main() {
     test('filtering options', () {
       expect(Option.some(2).filter((v) => v % 2 == 0), isA<Some>());
       expect(Option.some(3).filter((v) => v % 2 == 0), isA<None>());
-      expect(Option.none().filter((v) => fail('oh no')), isA<None>());
+      expect(Option.none().filter(((v) => fail('oh no'))), isA<None>());
     });
 
     test('this and that', () {
@@ -99,13 +99,13 @@ void main() {
       expect(Option.none().and(Option.some(2)), isA<None>());
       expect(Option.some(2).andThen((v) => Option.some(v * 2)).unwrap(),
           equals(4));
-      expect(Option.none().andThen((v) => fail('oh no')), isA<None>());
+      expect(Option.none().andThen(((v) => fail('oh no'))), isA<None>());
     });
 
     test('this or that', () {
       expect(Option.some(2).or(Option.none()), isA<Some>());
       expect(Option.none().or(Option.some(2)), isA<Some>());
-      expect(Option.some(2).orElse(() => fail('oh no')), isA<Some>());
+      expect(Option.some(2).orElse((() => fail('oh no'))), isA<Some>());
       expect(Option.none().orElse(() => Option.none()), isA<None>());
       expect(Option.none().orElse(() => Option.some(1)), isA<Some>());
     });

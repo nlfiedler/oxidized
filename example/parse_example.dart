@@ -19,10 +19,10 @@ void main() {
   final version = parse_version([1, 2, 3, 4]);
   version.when(
     ok: (v) {
-      print('working with version: ${v}');
+      print('working with version: $v');
     },
     err: (e) {
-      print('error parsing header: ${e}');
+      print('error parsing header: $e');
     },
   );
 }
