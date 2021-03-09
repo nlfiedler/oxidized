@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [4.1.0] - 2021-03-09
+### Changed
+- Returning values to `match()` and `when()` functions on `Result` and `Option`.
+
 ## [3.1.0] - 2020-03-22
 ### Added
 - Add `fold()` function on `Result` that combines `map()` and `mapErr()`.

@@ -28,12 +28,12 @@ abstract class Option<T> extends Equatable {
   /// expression, which makes it easy to handle both cases at once.
   ///
   /// See also [when] for another way to achieve the same behavior.
-  void match(void Function(T) someop, void Function() noneop);
+  R match<R>(R Function(T) someop, R Function() noneop);
 
   /// Invokes either `some` or `none` depending on the option.
   ///
   /// Identical to [match] except that the arguments are named.
-  void when({void Function(T) some, void Function() none});
+  R when<R>({R Function(T) some, R Function() none});
 
   /// Unwraps an option, yielding the content of a `Some`.
   ///
@@ -121,10 +121,10 @@ class Some<T> extends Option<T> {
   bool operator ==(other) => other is Some && other._some == _some;
 
   @override
-  void match(void Function(T) someop, void Function() noneop) => someop(_some);
+  R match<R>(R Function(T) someop, R Function() noneop) => someop(_some);
 
   @override
-  void when({void Function(T) some, void Function() none}) => some(_some);
+  R when<R>({R Function(T) some, R Function() none}) => some(_some);
 
   @override
   T expect(String msg) => _some;
@@ -193,10 +193,10 @@ class None<T> extends Option<T> {
   bool operator ==(other) => other is None;
 
   @override
-  void match(void Function(T) someop, void Function() noneop) => noneop();
+  R match<R>(R Function(T) someop, R Function() noneop) => noneop();
 
   @override
-  void when({void Function(T) some, void Function() none}) => none();
+  R when<R>({R Function(T) some, R Function() none}) => none();
 
   @override
   T expect(String msg) {

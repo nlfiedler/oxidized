@@ -38,12 +38,12 @@ abstract class Result<T, E> extends Equatable {
   /// the result.
   ///
   /// See also [when] for another way to achieve the same behavior.
-  void match(void Function(T) okop, void Function(E) errop);
+  R match<R>(R Function(T) okop, R Function(E) errop);
 
   /// Invokes either `ok` or `err` depending on the result.
   ///
   /// Identical to [match] except that the arguments are named.
-  void when({void Function(T) ok, void Function(E) err});
+  R when<R>({R Function(T) ok, R Function(E) err});
 
   /// Invoke either the `ok` or the `err` function based on the result.
   ///
@@ -140,10 +140,10 @@ class Ok<T, E> extends Result<T, E> {
   bool operator ==(other) => other is Ok && other._ok == _ok;
 
   @override
-  void match(void Function(T) okop, void Function(E) errop) => okop(_ok);
+  R match<R>(R Function(T) okop, R Function(E) errop) => okop(_ok);
 
   @override
-  void when({void Function(T) ok, void Function(E) err}) => ok(_ok);
+  R when<R>({R Function(T) ok, R Function(E) err}) => ok(_ok);
 
   @override
   Result<U, F> fold<U, F>(U Function(T) ok, F Function(E) err) => Ok(ok(_ok));
@@ -221,10 +221,10 @@ class Err<T, E> extends Result<T, E> {
   bool operator ==(other) => other is Err && other._err == _err;
 
   @override
-  void match(void Function(T) okop, void Function(E) errop) => errop(_err);
+  R match<R>(R Function(T) okop, R Function(E) errop) => errop(_err);
 
   @override
-  void when({void Function(T) ok, void Function(E) err}) => err(_err);
+  R when<R>({R Function(T) ok, R Function(E) err}) => err(_err);
 
   @override
   Result<U, F> fold<U, F>(U Function(T) ok, F Function(E) err) =>

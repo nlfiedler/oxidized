@@ -57,35 +57,43 @@ void main() {
 
     test('matching results', () {
       var called = 0;
-      Result.ok(3).match((v) {
+      var returned = Result.ok(3).match((v) {
         expect(v, equals(3));
         called++;
+        return 1;
       }, (err) => fail('oh no'));
+      expect(returned, equals(1));
       expect(called, equals(1));
-      Result.err(Exception()).match((v) => fail('oh no'), (err) {
+      returned = Result.err(Exception()).match((v) => fail('oh no'), (err) {
         expect(err, isNotNull);
         called++;
+        return 2;
       });
+      expect(returned, equals(2));
       expect(called, equals(2));
     });
 
     test('when matching results', () {
       var called = 0;
-      Result.ok(3).when(
+      var returned = Result.ok(3).when(
         ok: (v) {
           expect(v, equals(3));
           called++;
+          return 1;
         },
         err: (err) => fail('oh no'),
       );
       expect(called, equals(1));
-      Result.err(Exception()).when(
+      expect(returned, equals(1));
+      returned = Result.err(Exception()).when(
         ok: (v) => fail('oh no'),
         err: (err) {
           expect(err, isNotNull);
           called++;
+          return 2;
         },
       );
+      expect(returned, equals(2));
       expect(called, equals(2));
     });
 
