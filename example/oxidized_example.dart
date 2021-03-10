@@ -30,6 +30,13 @@ void main() async {
     print(text.substring(0, 80));
   }, (err) => print(err));
 
+  // also, you can return values in a functional way
+  final length = result.when(
+    ok: (text) => text.length,
+    err: (err) => -1,
+  );
+  print(length);
+
   // using the "catching" constructor with futures is also feasible
   var futureResult = await readFile('LICENSE');
   futureResult.when(
