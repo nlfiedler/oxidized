@@ -13,11 +13,6 @@ void main() {
       expect(Some(1).isNone(), isFalse);
     });
 
-    test('null some is considered none', () {
-      var option = Option.some(null);
-      expect(option, isA<None>());
-    });
-
     test('none has nothing', () {
       expect(Option.none(), isA<None>());
       expect(None(), isA<None>());
@@ -25,6 +20,16 @@ void main() {
       expect(None() == None(), isTrue);
       expect(None().isSome(), isFalse);
       expect(None().isNone(), isTrue);
+    });
+
+    test('from nullable', () {
+      expect(Option.from(1).isSome(), isTrue);
+      expect(Option.from(null).isNone(), isTrue);
+    });
+
+    test('to nullable', () {
+      expect(Option.from(1).toNullable(), equals(1));
+      expect(Option.from(null).toNullable(), equals(null));
     });
 
     test('expectations', () {
