@@ -9,6 +9,8 @@ void main() {
     test('some has a value', () {
       expect(Option.some(1), isA<Some>());
       expect(Some(1), isA<Some>());
+      expect(Some(1).isSome(), isTrue);
+      expect(Some(1).isNone(), isFalse);
     });
 
     test('null some is considered none', () {
@@ -21,6 +23,8 @@ void main() {
       expect(None(), isA<None>());
       expect(None(), equals(None()));
       expect(None() == None(), isTrue);
+      expect(None().isSome(), isFalse);
+      expect(None().isNone(), isTrue);
     });
 
     test('expectations', () {
