@@ -5,11 +5,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [4.2.0] - 2021-03-12
+### Added
+- lemunozm: added `isSome()`, `isNone()` to `Option`.
+- lemunozm: added `isOk()`, `isErr()` to `Result`.
+
 ## [4.1.0] - 2021-03-09
 ### Changed
 - lemunozm: return values added to `match()`, `when()` in `Result`, `Option`.
 
-## [4.0.0] - 2020-03-03
+## [4.0.0] - 2021-03-03
 ### Changed
 - **BREAKING CHANGE:** migrated to null safety and Dart SDK 2.12.
 

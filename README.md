@@ -37,10 +37,18 @@ Result<String, Exception> readFileSync(String name) {
 
 void main() {
   var result = readFileSync('README.md');
+
   result.match((text) {
     print('first 80 characters of file:\n');
     print(text.substring(0, 80));
   }, (err) => print(err));
+
+  // or in a more functional way:
+  final msg = result.when(
+    ok: (text) => 'first 80 characters of file:\n$text.substring(0, 80)',
+    err: (err) => err,
+  );
+  print(msg);
 }
 ```
 

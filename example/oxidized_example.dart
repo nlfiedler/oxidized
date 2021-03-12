@@ -16,8 +16,8 @@ Future<Result<Future<String>, Exception>> readFile(String name) async {
 void main() async {
   var result = readFileSync('README.md');
 
-  // you can use `is` like so
-  if (result is Err) {
+  // you can check like so (or with `is` keyword against `Err`)
+  if (result.isErr()) {
     print('oh no, unable to read the file!');
   } else {
     print('read the file successfully');

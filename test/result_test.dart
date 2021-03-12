@@ -9,6 +9,8 @@ void main() {
     test('ok is okay', () {
       expect(Result.ok(1), isA<Ok>());
       expect(Ok(1), isA<Ok>());
+      expect(Ok(1).isOk(), isTrue);
+      expect(Ok(1).isErr(), isFalse);
     });
 
     test('null ok is still okay', () {
@@ -20,6 +22,8 @@ void main() {
     test('err is not okay', () {
       expect(Result.err(Exception()), isA<Err>());
       expect(Err(Exception()), isA<Err>());
+      expect(Err(Exception()).isOk(), isFalse);
+      expect(Err(Exception()).isErr(), isTrue);
     });
 
     test('null err is still an error', () {

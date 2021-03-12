@@ -22,6 +22,12 @@ abstract class Option<T> extends Equatable {
   /// Create a `None` option with no value.
   factory Option.none() => None();
 
+  /// Returns `true` if the option is a `Some` value.
+  bool isSome();
+
+  /// Returns `true` if the option is a `None` value.
+  bool isNone();
+
   /// Invokes either the `someop` or the `noneop` depending on the option.
   ///
   /// This is an attempt at providing something similar to the Rust `match`
@@ -121,6 +127,12 @@ class Some<T> extends Option<T> {
   bool operator ==(other) => other is Some && other._some == _some;
 
   @override
+  bool isSome() => true;
+
+  @override
+  bool isNone() => false;
+
+  @override
   R match<R>(R Function(T) someop, R Function() noneop) => someop(_some);
 
   @override
@@ -192,6 +204,12 @@ class None<T> extends Option<T> {
 
   @override
   bool operator ==(other) => other is None;
+
+  @override
+  bool isSome() => false;
+
+  @override
+  bool isNone() => true;
 
   @override
   R match<R>(R Function(T) someop, R Function() noneop) => noneop();

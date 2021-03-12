@@ -31,6 +31,12 @@ abstract class Result<T, E> extends Equatable {
     }
   }
 
+  /// Returns `true` if the option is a `Ok` value.
+  bool isOk();
+
+  /// Returns `true` if the option is a `Err` value.
+  bool isErr();
+
   /// Invokes either the `okop` or the `errop` depending on the result.
   ///
   /// This is an attempt at providing something similar to the Rust `match`
@@ -140,6 +146,12 @@ class Ok<T, E> extends Result<T, E> {
   bool operator ==(other) => other is Ok && other._ok == _ok;
 
   @override
+  bool isOk() => true;
+
+  @override
+  bool isErr() => false;
+
+  @override
   R match<R>(R Function(T) okop, R Function(E) errop) => okop(_ok);
 
   @override
@@ -219,6 +231,12 @@ class Err<T, E> extends Result<T, E> {
 
   @override
   bool operator ==(other) => other is Err && other._err == _err;
+
+  @override
+  bool isOk() => false;
+
+  @override
+  bool isErr() => true;
 
   @override
   R match<R>(R Function(T) okop, R Function(E) errop) => errop(_err);
