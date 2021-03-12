@@ -9,6 +9,7 @@ This file follows the convention described at
 ### Added
 - lemunozm: added `isSome()`, `isNone()` to `Option`.
 - lemunozm: added `isOk()`, `isErr()` to `Result`.
+- lemunozm: added `Option.from()` and `Option.toNullable()` to make easy conversions with nullable values.
 
 ## [4.1.0] - 2021-03-09
 ### Changed

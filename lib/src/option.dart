@@ -13,14 +13,24 @@ abstract class Option<T> extends Equatable {
   const Option();
 
   /// Create a `Some` option with the given value.
-  ///
-  /// Passing a `null` value will result in a `None`.
-  factory Option.some(T? v) {
-    return v == null ? None() : Some(v);
-  }
+  factory Option.some(T v) => Some(v);
 
   /// Create a `None` option with no value.
   factory Option.none() => None();
+
+  /// Create a option from a nullable value.
+  ///
+  /// Passing a non-null value will result in a `Some`.
+  /// Passing a `null` value will result in a `None`.
+  factory Option.from(T? v) {
+    return v == null ? None() : Some(v);
+  }
+
+  /// Returns an nullable that represents this optional value.
+  ///
+  /// If Option has Some value, it will return that value.
+  /// If Option has a None value, it will return `null`.
+  T? toNullable();
 
   /// Returns `true` if the option is a `Some` value.
   bool isSome();
@@ -127,6 +137,9 @@ class Some<T> extends Option<T> {
   bool operator ==(other) => other is Some && other._some == _some;
 
   @override
+  T? toNullable() => _some;
+
+  @override
   bool isSome() => true;
 
   @override
@@ -204,6 +217,9 @@ class None<T> extends Option<T> {
 
   @override
   bool operator ==(other) => other is None;
+
+  @override
+  T? toNullable() => null;
 
   @override
   bool isSome() => false;
