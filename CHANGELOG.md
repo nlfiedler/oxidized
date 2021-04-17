@@ -5,11 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [4.2.0] - 2021-03-12
+## [Unreleased]
 ### Added
 - lemunozm: added `isSome()`, `isNone()` to `Option`.
 - lemunozm: added `isOk()`, `isErr()` to `Result`.
 - lemunozm: added `Option.from()` and `Option.toNullable()` to make easy conversions with nullable values.
+- Added a `Unit` type that is similar to Rust's `()` type.
 
 ## [4.1.0] - 2021-03-09
 ### Changed

@@ -78,7 +78,19 @@
 ///   );
 /// }
 /// ```
+///
+/// # Unit
+///
+/// Similar to the Rust `()` type, the `Unit` type has exactly one value `()`,
+/// and is used when there is no other meaningful value that could be returned.
+/// This is especially useful for `Result` when not returning anything other
+/// than an error, as returning `void` in Dart is difficult with type
+/// parameterization.
+///
+/// The single instance of `Unit` is defined as the `unit` constant in the
+/// package.
 library oxidized;
 
 export 'src/option.dart';
 export 'src/result.dart';
+export 'src/unit.dart';

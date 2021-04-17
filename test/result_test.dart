@@ -19,6 +19,13 @@ void main() {
       expect(result, isNot(isA<Err>()));
     });
 
+    test('unit value is an ok unit', () {
+      var result = Result.ok(unit);
+      expect(result, isA<Ok>());
+      expect(result, isNot(isA<Err>()));
+      expect(result.unwrap(), equals(unit));
+    });
+
     test('err is not okay', () {
       expect(Result.err(Exception()), isA<Err>());
       expect(Err(Exception()), isA<Err>());
