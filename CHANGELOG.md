@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [4.2.0] - 2021-04-30
 ### Added
 - lemunozm: added `isSome()`, `isNone()` to `Option`.
 - lemunozm: added `isOk()`, `isErr()` to `Result`.
