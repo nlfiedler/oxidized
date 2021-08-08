@@ -9,7 +9,7 @@ import './result.dart';
 ///
 /// `Option<T>` is the type used for returning an optional value. It is an
 /// object with a `Some` value, and `None`, representing no value.
-abstract class Option<T> extends Equatable {
+abstract class Option<T extends Object> extends Equatable {
   const Option();
 
   /// Create a `Some` option with the given value.
@@ -69,7 +69,7 @@ abstract class Option<T> extends Equatable {
 
   /// Maps an `Option<T>` to `Option<U>` by applying a function to a contained
   /// `Some` value. Otherwise returns a `None`.
-  Option<U> map<U>(U Function(T) op);
+  Option<U> map<U extends Object>(U Function(T) op);
 
   /// Applies a function to the contained value (if any), or returns the
   /// provided default (if not).
@@ -81,11 +81,11 @@ abstract class Option<T> extends Equatable {
 
   /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
   /// `Ok(v)` and `None` to `Err(err)`.
-  Result<T, E> okOr<E>(E err);
+  Result<T, E> okOr<E extends Object>(E err);
 
   /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
   /// `Ok(v)` and `None` to `Err(err())`.
-  Result<T, E> okOrElse<E>(E Function() err);
+  Result<T, E> okOrElse<E extends Object>(E Function() err);
 
   /// Returns `None` if the option is `None`, otherwise calls `predicate` with
   /// the wrapped value and returns:
@@ -119,7 +119,7 @@ abstract class Option<T> extends Equatable {
 /// `Option.some()` factory constructor. The advantage of using the factory
 /// constructor on `Option` is that it will yield a `None` if the passed value
 /// is `null`, which can be helpful.
-class Some<T> extends Option<T> {
+class Some<T extends Object> extends Option<T> {
   final T _some;
 
   /// Create a `Some` option with the given value.
@@ -165,7 +165,7 @@ class Some<T> extends Option<T> {
   T unwrapOrElse(T Function() op) => _some;
 
   @override
-  Option<U> map<U>(U Function(T) op) => Option.some(op(_some));
+  Option<U> map<U extends Object>(U Function(T) op) => Option.some(op(_some));
 
   @override
   U mapOr<U>(U Function(T) op, U opt) => op(_some);
@@ -174,10 +174,10 @@ class Some<T> extends Option<T> {
   U mapOrElse<U>(U Function(T) op, U Function() def) => op(_some);
 
   @override
-  Result<T, E> okOr<E>(E err) => Result.ok(_some);
+  Result<T, E> okOr<E extends Object>(E err) => Result.ok(_some);
 
   @override
-  Result<T, E> okOrElse<E>(E Function() err) => Result.ok(_some);
+  Result<T, E> okOrElse<E extends Object>(E Function() err) => Result.ok(_some);
 
   @override
   Option<T> filter(bool Function(T) predicate) {
@@ -205,7 +205,7 @@ class Some<T> extends Option<T> {
 /// You can construct a `None` using the `None()` constructor or by calling the
 /// `Option.none()` factory constructor. A `None` is also returned when a `null`
 /// is passed to the `Option.some()` factory constructor.
-class None<T> extends Option<T> {
+class None<T extends Object> extends Option<T> {
   /// Create a `None` option with no value.
   const None();
 
@@ -251,7 +251,7 @@ class None<T> extends Option<T> {
   T unwrapOrElse(T Function() op) => op();
 
   @override
-  Option<U> map<U>(U Function(T) op) => Option.none();
+  Option<U> map<U extends Object>(U Function(T) op) => Option.none();
 
   @override
   U mapOr<U>(U Function(T) op, U opt) => opt;
@@ -260,10 +260,11 @@ class None<T> extends Option<T> {
   U mapOrElse<U>(U Function(T) op, U Function() def) => def();
 
   @override
-  Result<T, E> okOr<E>(E err) => Result.err(err);
+  Result<T, E> okOr<E extends Object>(E err) => Result.err(err);
 
   @override
-  Result<T, E> okOrElse<E>(E Function() err) => Result.err(err());
+  Result<T, E> okOrElse<E extends Object>(E Function() err) =>
+      Result.err(err());
 
   @override
   Option<T> filter(bool Function(T) predicate) => Option.none();
