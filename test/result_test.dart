@@ -13,12 +13,6 @@ void main() {
       expect(Ok(1).isErr(), isFalse);
     });
 
-    test('null ok is still okay', () {
-      var result = Result.ok(null);
-      expect(result, isA<Ok>());
-      expect(result, isNot(isA<Err>()));
-    });
-
     test('unit value is an ok unit', () {
       var result = Result.ok(unit);
       expect(result, isA<Ok>());
@@ -31,11 +25,6 @@ void main() {
       expect(Err(Exception()), isA<Err>());
       expect(Err(Exception()).isOk(), isFalse);
       expect(Err(Exception()).isErr(), isTrue);
-    });
-
-    test('null err is still an error', () {
-      expect(Result.err(null), isA<Err>());
-      expect(Err(null), isA<Err>());
     });
 
     test('catching ok values', () {

@@ -9,14 +9,14 @@ import './option.dart';
 /// `Result<T, E>` is the type used for returning and propagating errors. It is
 /// an object with an `Ok` value, representing success and containing a value,
 /// and `Err`, representing error and containing an error value.
-abstract class Result<T, E> extends Equatable {
+abstract class Result<T extends Object, E extends Object> extends Equatable {
   Result();
 
   /// Create an `Ok` result with the given value.
-  factory Result.ok(T s) => Ok(s);
+  factory Result.ok(T s) = Ok;
 
   /// Create an `Err` result with the given error.
-  factory Result.err(E err) => Err(err);
+  factory Result.err(E err) = Err;
 
   /// Call the `catching` function and produce a `Result`.
   ///
@@ -54,7 +54,10 @@ abstract class Result<T, E> extends Equatable {
   /// Invoke either the `ok` or the `err` function based on the result.
   ///
   /// This is a combination of the [map()] and [mapErr()] functions.
-  Result<U, F> fold<U, F>(U Function(T) ok, F Function(E) err);
+  Result<U, F> fold<U extends Object, F extends Object>(
+    U Function(T) ok,
+    F Function(E) err,
+  );
 
   /// Converts the `Result` into an `Option` containing the value, if any.
   /// Otherwise returns `None` if the result is an error.
@@ -76,14 +79,14 @@ abstract class Result<T, E> extends Equatable {
 
   /// Maps a `Result<T, E>` to `Result<U, E>` by applying a function to a
   /// contained `Ok` value, leaving an `Err` value untouched.
-  Result<U, E> map<U>(U Function(T) op);
+  Result<U, E> map<U extends Object>(U Function(T) op);
 
   /// Maps a `Result<T, E>` to `Result<T, F>` by applying a function to
   /// a contained `Err` value, leaving an `Ok` value untouched.
   ///
   /// This function can be used to pass through a successful result while
   /// handling an error.
-  Result<T, F> mapErr<F>(F Function(E) op);
+  Result<T, F> mapErr<F extends Object>(F Function(E) op);
 
   /// Applies a function to the contained value (if any), or returns the
   /// provided default (if not).
@@ -130,7 +133,7 @@ abstract class Result<T, E> extends Equatable {
 ///
 /// You can create an `Ok` using either the `Ok()` constructor or the
 /// `Result.ok()` factory constructor.
-class Ok<T, E> extends Result<T, E> {
+class Ok<T extends Object, E extends Object> extends Result<T, E> {
   final T _ok;
 
   /// Create an `Ok` result with the given value.
@@ -158,7 +161,11 @@ class Ok<T, E> extends Result<T, E> {
   R when<R>({required R Function(T) ok, required R Function(E) err}) => ok(_ok);
 
   @override
-  Result<U, F> fold<U, F>(U Function(T) ok, F Function(E) err) => Ok(ok(_ok));
+  Result<U, F> fold<U extends Object, F extends Object>(
+    U Function(T) ok,
+    F Function(E) err,
+  ) =>
+      Ok(ok(_ok));
 
   @override
   Option<T> ok() => Option.some(_ok);
@@ -175,10 +182,10 @@ class Ok<T, E> extends Result<T, E> {
   }
 
   @override
-  Result<U, E> map<U>(U Function(T) op) => Ok(op(_ok));
+  Result<U, E> map<U extends Object>(U Function(T) op) => Ok(op(_ok));
 
   @override
-  Result<T, F> mapErr<F>(F Function(E) op) => Ok(_ok);
+  Result<T, F> mapErr<F extends Object>(F Function(E) op) => Ok(_ok);
 
   @override
   U mapOr<U>(U Function(T) op, U opt) => op(_ok);
@@ -217,7 +224,7 @@ class Ok<T, E> extends Result<T, E> {
 ///
 /// You can create an `Err` using either the `Err(E)` constructor or the
 /// `Result.err(E)` factory constructor.
-class Err<T, E> extends Result<T, E> {
+class Err<T extends Object, E extends Object> extends Result<T, E> {
   final E _err;
 
   /// Create an `Err` result with the given error.
@@ -246,7 +253,10 @@ class Err<T, E> extends Result<T, E> {
       err(_err);
 
   @override
-  Result<U, F> fold<U, F>(U Function(T) ok, F Function(E) err) =>
+  Result<U, F> fold<U extends Object, F extends Object>(
+    U Function(T) ok,
+    F Function(E) err,
+  ) =>
       Err(err(_err));
 
   @override
@@ -264,10 +274,10 @@ class Err<T, E> extends Result<T, E> {
   E expectErr(String msg) => _err;
 
   @override
-  Result<U, E> map<U>(U Function(T) op) => Err(_err);
+  Result<U, E> map<U extends Object>(U Function(T) op) => Err(_err);
 
   @override
-  Result<T, F> mapErr<F>(F Function(E) op) => Err(op(_err));
+  Result<T, F> mapErr<F extends Object>(F Function(E) op) => Err(op(_err));
 
   @override
   U mapOr<U>(U Function(T) op, U opt) => opt;
@@ -288,9 +298,7 @@ class Err<T, E> extends Result<T, E> {
   Result<T, E> orElse(Result<T, E> Function(E) op) => op(_err);
 
   @override
-  T unwrap() {
-    throw _err as Object;
-  }
+  T unwrap() => throw _err;
 
   @override
   E unwrapErr() => _err;

@@ -24,12 +24,12 @@ void main() {
 
     test('from nullable', () {
       expect(Option.from(1).isSome(), isTrue);
-      expect(Option.from(null).isNone(), isTrue);
+      expect(Option<int>.from(null).isNone(), isTrue);
     });
 
     test('to nullable', () {
       expect(Option.from(1).toNullable(), equals(1));
-      expect(Option.from(null).toNullable(), equals(null));
+      expect(Option<int>.from(null).toNullable(), equals(null));
     });
 
     test('expectations', () {

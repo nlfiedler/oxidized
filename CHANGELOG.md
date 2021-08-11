@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [Unrealeased]
+
+### Changed
+- kranfix: refactored `Option<T extends Object>` to fix `Result<int?, Exception>.ok(null).ok()`
+- kranfix: refactored `Result<T extends Object, E extends Object>` to fix `Result<int?, Exception>.ok(null)`
+
 ## [4.2.0] - 2021-04-30
 ### Added
 - lemunozm: added `isSome()`, `isNone()` to `Option`.
