@@ -5,9 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unrealeased]
-
+## [5.0.0] - 2021-08-11
 ### Changed
+- **BREAKING CHANGE:** can no longer pass `null` to `Result`. The rectifies the
+  inconsistent handling of null values with regards to `Option` and `Result`.
 - kranfix: refactored `Option<T extends Object>` to fix `Result<int?, Exception>.ok(null).ok()`
 - kranfix: refactored `Result<T extends Object, E extends Object>` to fix `Result<int?, Exception>.ok(null)`
 
