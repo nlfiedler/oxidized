@@ -132,9 +132,6 @@ class Some<T extends Object> extends Option<T> {
   bool get stringify => true;
 
   @override
-  bool operator ==(other) => other is Some && other._some == _some;
-
-  @override
   T? toNullable() => _some;
 
   @override
@@ -212,9 +209,6 @@ class None<T extends Object> extends Option<T> {
 
   @override
   bool get stringify => true;
-
-  @override
-  bool operator ==(other) => other is None;
 
   @override
   T? toNullable() => null;
