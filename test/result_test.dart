@@ -166,6 +166,8 @@ void main() {
     });
 
     test('unwrapping with a default', () {
+      expect(Result.ok(5).unwrapOr(2), equals(5));
+      expect(Result.ok(5).unwrapOrElse((e) => fail('oh no')), equals(5));
       expect(Result.err(Exception()).unwrapOr(2), equals(2));
       expect(Result.err(Exception()).unwrapOrElse((e) => 2), equals(2));
     });
