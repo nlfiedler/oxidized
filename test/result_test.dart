@@ -47,12 +47,32 @@ void main() {
 
     test('equal values are equal', () {
       expect(Result.ok(2), equals(Result.ok(2)));
+      expect(Result<int, String>.ok(2), isNot(equals(Result<int, bool>.ok(2))));
       expect(Result.ok(2), isNot(equals(Result.ok(3))));
       var exc = Exception();
       expect(Result.err(exc), equals(Result.err(exc)));
+      expect(
+          Err<int, Exception>(exc), isNot(equals(Err<double, Exception>(exc))));
       // exceptions do not compare equally?
       expect(Result.err(Exception()), isNot(equals(Result.err(Exception()))));
       expect(Result.ok(2), isNot(equals(Result.err(Exception()))));
+    });
+
+    test('to string', () {
+      expect(Result.ok(2).toString(), equals('Ok<int, Object>(2)'));
+      expect(
+        Result<int, String>.ok(2).toString(),
+        equals('Ok<int, String>(2)'),
+      );
+
+      expect(
+        Result.err('message').toString(),
+        equals('Err<Object, String>(message)'),
+      );
+      expect(
+        Result<int, String>.err('message').toString(),
+        equals('Err<int, String>(message)'),
+      );
     });
 
     test('matching results', () {
@@ -166,6 +186,8 @@ void main() {
     });
 
     test('unwrapping with a default', () {
+      expect(Result.ok(5).unwrapOr(2), equals(5));
+      expect(Result.ok(5).unwrapOrElse((e) => fail('oh no')), equals(5));
       expect(Result.err(Exception()).unwrapOr(2), equals(2));
       expect(Result.err(Exception()).unwrapOrElse((e) => 2), equals(2));
     });

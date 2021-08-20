@@ -32,6 +32,11 @@ void main() {
       expect(Option<int>.from(null).toNullable(), equals(null));
     });
 
+    test('to string', () {
+      expect(Some(1).toString(), equals('Some<int>(1)'));
+      expect(None<int>().toString(), equals('None<int>()'));
+    });
+
     test('expectations', () {
       expect(Option.some(2).expect('foo'), equals(2));
       expect(() => Option.none().expect('oh no'), throwsException);
@@ -41,7 +46,10 @@ void main() {
       expect(Option.some(2) == Option.some(2), isTrue);
       expect(Option.some(2) == Option.some(3), isFalse);
       expect(Option.none() == Option.none(), isTrue);
-      expect(Option.some(2) == Option.none(), isFalse);
+      expect(Option.some(2) == Option<int>.none(), isFalse);
+
+      expect(Option.some(2) == Option.some(2.0), isFalse);
+      expect(Option<int>.none() == Option<double>.none(), isFalse);
     });
 
     test('unwrapping the present', () {
@@ -50,6 +58,9 @@ void main() {
     });
 
     test('unwrapping with a default', () {
+      expect(Option.some(5).unwrapOr(2), equals(5));
+      expect(Option.some(5).unwrapOrElse(() => 2), equals(5));
+
       expect(Option.none().unwrapOr(2), equals(2));
       expect(Option.none().unwrapOrElse(() => 2), equals(2));
     });
@@ -87,6 +98,8 @@ void main() {
       expect(Option.some(5).mapOr((v) => v * 2, 2), equals(10));
       expect(Option.some(5).mapOrElse((v) => v * 2, () => 2), equals(10));
       expect(Option.none().map((v) => fail('oh no')), isA<None>());
+      expect(Option<int>.none().mapOr((v) => fail('oh no'), 2), equals(2));
+      expect(None<int>().mapOrElse((v) => fail('oh no'), () => 2), equals(2));
     });
 
     test('option as a result', () {

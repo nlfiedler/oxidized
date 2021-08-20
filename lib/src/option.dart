@@ -123,16 +123,13 @@ class Some<T extends Object> extends Option<T> {
   final T _some;
 
   /// Create a `Some` option with the given value.
-  Some(v) : _some = v;
+  Some(T v) : _some = v;
 
   @override
   List<Object?> get props => [_some];
 
   @override
   bool get stringify => true;
-
-  @override
-  bool operator ==(other) => other is Some && other._some == _some;
 
   @override
   T? toNullable() => _some;
@@ -212,9 +209,6 @@ class None<T extends Object> extends Option<T> {
 
   @override
   bool get stringify => true;
-
-  @override
-  bool operator ==(other) => other is None;
 
   @override
   T? toNullable() => null;
