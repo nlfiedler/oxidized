@@ -146,9 +146,6 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
   bool get stringify => true;
 
   @override
-  bool operator ==(other) => other is Ok && other._ok == _ok;
-
-  @override
   bool isOk() => true;
 
   @override
@@ -235,9 +232,6 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
 
   @override
   bool get stringify => true;
-
-  @override
-  bool operator ==(other) => other is Err && other._err == _err;
 
   @override
   bool isOk() => false;
