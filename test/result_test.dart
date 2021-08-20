@@ -58,6 +58,23 @@ void main() {
       expect(Result.ok(2), isNot(equals(Result.err(Exception()))));
     });
 
+    test('to string', () {
+      expect(Result.ok(2).toString(), equals('Ok<int, Object>(2)'));
+      expect(
+        Result<int, String>.ok(2).toString(),
+        equals('Ok<int, String>(2)'),
+      );
+
+      expect(
+        Result.err('message').toString(),
+        equals('Err<Object, String>(message)'),
+      );
+      expect(
+        Result<int, String>.err('message').toString(),
+        equals('Err<int, String>(message)'),
+      );
+    });
+
     test('matching results', () {
       var called = 0;
       var returned = Result.ok(3).match((v) {
