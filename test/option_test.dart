@@ -32,6 +32,11 @@ void main() {
       expect(Option<int>.from(null).toNullable(), equals(null));
     });
 
+    test('to string', () {
+      expect(Some(1).toString(), equals('Some<int>(1)'));
+      expect(None<int>().toString(), equals('None<int>()'));
+    });
+
     test('expectations', () {
       expect(Option.some(2).expect('foo'), equals(2));
       expect(() => Option.none().expect('oh no'), throwsException);
