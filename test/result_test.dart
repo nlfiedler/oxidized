@@ -47,9 +47,12 @@ void main() {
 
     test('equal values are equal', () {
       expect(Result.ok(2), equals(Result.ok(2)));
+      expect(Result<int, String>.ok(2), isNot(equals(Result<int, bool>.ok(2))));
       expect(Result.ok(2), isNot(equals(Result.ok(3))));
       var exc = Exception();
       expect(Result.err(exc), equals(Result.err(exc)));
+      expect(
+          Err<int, Exception>(exc), isNot(equals(Err<double, Exception>(exc))));
       // exceptions do not compare equally?
       expect(Result.err(Exception()), isNot(equals(Result.err(Exception()))));
       expect(Result.ok(2), isNot(equals(Result.err(Exception()))));
