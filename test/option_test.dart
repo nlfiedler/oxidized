@@ -41,7 +41,10 @@ void main() {
       expect(Option.some(2) == Option.some(2), isTrue);
       expect(Option.some(2) == Option.some(3), isFalse);
       expect(Option.none() == Option.none(), isTrue);
-      expect(Option.some(2) == Option.none(), isFalse);
+      expect(Option.some(2) == Option<int>.none(), isFalse);
+
+      expect(Option.some(2) == Option.some(2.0), isFalse);
+      expect(Option<int>.none() == Option<double>.none(), isFalse);
     });
 
     test('unwrapping the present', () {
