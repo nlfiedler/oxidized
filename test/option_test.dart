@@ -90,6 +90,8 @@ void main() {
       expect(Option.some(5).mapOr((v) => v * 2, 2), equals(10));
       expect(Option.some(5).mapOrElse((v) => v * 2, () => 2), equals(10));
       expect(Option.none().map((v) => fail('oh no')), isA<None>());
+      expect(Option<int>.none().mapOr((v) => fail('oh no'), 2), equals(2));
+      expect(None<int>().mapOrElse((v) => fail('oh no'), () => 2), equals(2));
     });
 
     test('option as a result', () {
