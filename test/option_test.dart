@@ -50,6 +50,9 @@ void main() {
     });
 
     test('unwrapping with a default', () {
+      expect(Option.some(5).unwrapOr(2), equals(5));
+      expect(Option.some(5).unwrapOrElse(() => 2), equals(5));
+
       expect(Option.none().unwrapOr(2), equals(2));
       expect(Option.none().unwrapOrElse(() => 2), equals(2));
     });
