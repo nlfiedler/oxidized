@@ -123,7 +123,7 @@ class Some<T extends Object> extends Option<T> {
   final T _some;
 
   /// Create a `Some` option with the given value.
-  Some(v) : _some = v;
+  Some(T v) : _some = v;
 
   @override
   List<Object?> get props => [_some];
