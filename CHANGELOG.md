@@ -5,9 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## Unrealeased [5.0.1] - 2021-08-20
+## [5.0.1] - 2021-08-24
 
-- kranfix: Full coverage
+### Changed
+
+- kranfix: Fixed equality operator for `Option` and `Result`.
+- kranfix: Added more code coverage in unit tests.
 
 ## [5.0.0] - 2021-08-11
 
