@@ -5,6 +5,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [5.1.0] - 2021-09-20
+
+### Added
+
+- kranfix: `Option<Result<T, E>>.transpose()` returns a `Result<Option<T>, E>`.
+- kranfix: `Option<Option<T>>.flatten()` returns an `Option<T>`.
+- kranfix: `Result<Option<T>, E>.transpose()` returns an `Option<Result<T, E>>`.
+- kranfix: `Result<Result<T, E>, E>.flatten()` returns a `Result<T, E>`.
+
 ## [5.0.1] - 2021-08-24
 
 ### Changed
