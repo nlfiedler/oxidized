@@ -1,6 +1,7 @@
 //
 // Copyright (c) 2020 Nathan Fiedler
 //
+
 import 'package:equatable/equatable.dart';
 import './option.dart';
 
@@ -97,18 +98,18 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   U mapOrElse<U>(U Function(T) op, U Function(E) errOp);
 
   /// Returns `res` if the result is `Ok`, otherwise returns `this`.
-  Result<T, E> and(Result<T, E> res);
+  Result<U, E> and<U extends Object>(Result<U, E> res);
 
   /// Calls `op` with the `Ok` value if the result is `Ok`, otherwise returns
   /// `this`.
-  Result<T, E> andThen(Result<T, E> Function(T) op);
+  Result<U, E> andThen<U extends Object>(Result<U, E> Function(T) op);
 
   /// Returns `res` if the result is an `Err`, otherwise returns `this`.
-  Result<T, E> or(Result<T, E> res);
+  Result<T, F> or<F extends Object>(Result<T, F> res);
 
   /// Calls `op` with the `Err` value if the result is `Err`, otherwise returns
   /// `this`.
-  Result<T, E> orElse(Result<T, E> Function(E) op);
+  Result<T, F> orElse<F extends Object>(Result<T, F> Function(E) op);
 
   /// Unwraps a result, yielding the content of an `Ok`.
   ///
@@ -191,16 +192,17 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
   U mapOrElse<U>(U Function(T) op, U Function(E) errOp) => op(_ok);
 
   @override
-  Result<T, E> and(Result<T, E> res) => res;
+  Result<U, E> and<U extends Object>(Result<U, E> res) => res;
 
   @override
-  Result<T, E> andThen(Result<T, E> Function(T) op) => op(_ok);
+  Result<U, E> andThen<U extends Object>(Result<U, E> Function(T) op) =>
+      op(_ok);
 
   @override
-  Result<T, E> or(Result<T, E> res) => this;
+  Result<T, F> or<F extends Object>(Result<T, F> res) => Ok(_ok);
 
   @override
-  Result<T, E> orElse(Result<T, E> Function(E) op) => this;
+  Result<T, F> orElse<F extends Object>(Result<T, F> Function(E) op) => Ok(_ok);
 
   @override
   T unwrap() => _ok;
@@ -280,16 +282,18 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
   U mapOrElse<U>(U Function(T) op, U Function(E) errOp) => errOp(_err);
 
   @override
-  Result<T, E> and(Result<T, E> res) => this;
+  Result<U, E> and<U extends Object>(Result<U, E> res) => Err(_err);
 
   @override
-  Result<T, E> andThen(Result<T, E> Function(T) op) => this;
+  Result<U, E> andThen<U extends Object>(Result<U, E> Function(T) op) =>
+      Err(_err);
 
   @override
-  Result<T, E> or(Result<T, E> res) => res;
+  Result<T, F> or<F extends Object>(Result<T, F> res) => res;
 
   @override
-  Result<T, E> orElse(Result<T, E> Function(E) op) => op(_err);
+  Result<T, F> orElse<F extends Object>(Result<T, F> Function(E) op) =>
+      op(_err);
 
   @override
   T unwrap() => throw _err;
