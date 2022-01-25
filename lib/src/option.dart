@@ -95,11 +95,11 @@ abstract class Option<T extends Object> extends Equatable {
   Option<T> filter(bool Function(T) predicate);
 
   /// Returns `None` if the option is `None`, otherwise returns `optb`.
-  Option<T> and(Option<T> optb);
+  Option<U> and<U extends Object>(Option<U> optb);
 
   /// Returns `None` if the option is `None`, otherwise calls `op` with the
   /// wrapped value and returns the result.
-  Option<T> andThen(Option<T> Function(T) op);
+  Option<U> andThen<U extends Object>(Option<U> Function(T) op);
 
   /// Returns the option if it contains a value, otherwise returns `optb`.
   Option<T> or(Option<T> optb);
@@ -180,10 +180,10 @@ class Some<T extends Object> extends Option<T> {
   }
 
   @override
-  Option<T> and(Option<T> optb) => optb;
+  Option<U> and<U extends Object>(Option<U> optb) => optb;
 
   @override
-  Option<T> andThen(Option<T> Function(T) op) => op(_some);
+  Option<U> andThen<U extends Object>(Option<U> Function(T) op) => op(_some);
 
   @override
   Option<T> or(Option<T> optb) => this;
@@ -262,10 +262,11 @@ class None<T extends Object> extends Option<T> {
   Option<T> filter(bool Function(T) predicate) => Option.none();
 
   @override
-  Option<T> and(Option<T> optb) => this;
+  Option<U> and<U extends Object>(Option<U> optb) => Option.none();
 
   @override
-  Option<T> andThen(Option<T> Function(T) op) => this;
+  Option<U> andThen<U extends Object>(Option<U> Function(T) op) =>
+      Option.none();
 
   @override
   Option<T> or(Option<T> optb) => optb;
