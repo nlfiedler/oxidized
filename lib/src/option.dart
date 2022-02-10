@@ -1,7 +1,10 @@
 //
 // Copyright (c) 2020 Nathan Fiedler
 //
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
+import 'package:oxidized/oxidized.dart';
 import './result.dart';
 
 /// Option is a type that represents either some value (`Some`) or none
@@ -46,10 +49,29 @@ abstract class Option<T extends Object> extends Equatable {
   /// See also [when] for another way to achieve the same behavior.
   R match<R>(R Function(T) someop, R Function() noneop);
 
+  /// Asynchronously invokes either the `someop` or the `noneop` depending on the option.
+  ///
+  /// This is an attempt at providing something similar to the Rust `match`
+  /// expression, which makes it easy to handle both cases at once.
+  ///
+  /// See also [when] for another way to achieve the same behavior.
+  Future<R> matchAsync<R>(
+    Future<R> Function(T) someop,
+    Future<R> Function() noneop,
+  );
+
   /// Invokes either `some` or `none` depending on the option.
   ///
   /// Identical to [match] except that the arguments are named.
   R when<R>({required R Function(T) some, required R Function() none});
+
+  /// Asynchronously invokes either `some` or `none` depending on the option.
+  ///
+  /// Identical to [match] except that the arguments are named.
+  Future<R> whenAsync<R>({
+    required Future<R> Function(T) some,
+    required Future<R> Function() none,
+  });
 
   /// Unwraps an option, yielding the content of a `Some`.
   ///
@@ -67,17 +89,35 @@ abstract class Option<T extends Object> extends Equatable {
   /// Returns the contained value or computes it from a closure.
   T unwrapOrElse(T Function() op);
 
+  /// Returns the contained value or asynchronously computes it from a closure.
+  Future<T> unwrapOrElseAsync(Future<T> Function() op);
+
   /// Maps an `Option<T>` to `Option<U>` by applying a function to a contained
   /// `Some` value. Otherwise returns a `None`.
   Option<U> map<U extends Object>(U Function(T) op);
+
+  /// Maps an `Option<T>` to `Option<U>` by applying an asynchronous function to a contained
+  /// `Some` value. Otherwise returns a `None`.
+  Future<Option<U>> mapAsync<U extends Object>(Future<U> Function(T) op);
 
   /// Applies a function to the contained value (if any), or returns the
   /// provided default (if not).
   U mapOr<U>(U Function(T) op, U opt);
 
+  /// Applies an asynchronous function to the contained value (if any), or returns the
+  /// provided default (if not).
+  Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt);
+
   /// Maps an `Option<T>` to `U` by applying a function to a contained `T`
   /// value, or computes a default (if not).
   U mapOrElse<U>(U Function(T) op, U Function() def);
+
+  /// Maps an `Option<T>` to `U` by applying an asynchronous function to a contained `T`
+  /// value, or computes a default (if not).
+  Future<U> mapOrElseAsync<U>(
+    Future<U> Function(T) op,
+    Future<U> Function() def,
+  );
 
   /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
   /// `Ok(v)` and `None` to `Err(err)`.
@@ -87,12 +127,25 @@ abstract class Option<T extends Object> extends Equatable {
   /// `Ok(v)` and `None` to `Err(err())`.
   Result<T, E> okOrElse<E extends Object>(E Function() err);
 
+  /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
+  /// `Ok(v)` and `None` to `Err(err())`.
+  Future<Result<T, E>> okOrElseAsync<E extends Object>(
+    Future<E> Function() err,
+  );
+
   /// Returns `None` if the option is `None`, otherwise calls `predicate` with
   /// the wrapped value and returns:
   ///
   /// * `Some(t)` if predicate returns `true` (where `t` is the wrapped value)
   /// * `None` if predicate returns `false`.
   Option<T> filter(bool Function(T) predicate);
+
+  /// Returns `None` if the option is `None`, otherwise calls `predicate` with
+  /// the wrapped value and returns:
+  ///
+  /// * `Some(t)` if predicate returns `true` (where `t` is the wrapped value)
+  /// * `None` if predicate returns `false`.
+  Future<Option<T>> filterAsync(Future<bool> Function(T) predicate);
 
   /// Returns `None` if the option is `None`, otherwise returns `optb`.
   Option<U> and<U extends Object>(Option<U> optb);
@@ -101,12 +154,22 @@ abstract class Option<T extends Object> extends Equatable {
   /// wrapped value and returns the result.
   Option<U> andThen<U extends Object>(Option<U> Function(T) op);
 
+  /// Returns `None` if the option is `None`, otherwise asynchronously calls `op` with the
+  /// wrapped value and returns the result.
+  Future<Option<U>> andThenAsync<U extends Object>(
+    Future<Option<U>> Function(T) op,
+  );
+
   /// Returns the option if it contains a value, otherwise returns `optb`.
   Option<T> or(Option<T> optb);
 
   /// Returns the option if it contains a value, otherwise calls `op` and
   /// returns the result.
   Option<T> orElse(Option<T> Function() op);
+
+  /// Returns the option if it contains a value, otherwise asynchronously calls `op` and
+  /// returns the result.
+  Future<Option<T>> orElseAsync(Future<Option<T>> Function() op);
 
   /// Returns `Some` if exactly one of `this`, `optb` is `Some`, otherwise
   /// returns `None`.
@@ -175,9 +238,8 @@ class Some<T extends Object> extends Option<T> {
   Result<T, E> okOrElse<E extends Object>(E Function() err) => Result.ok(_some);
 
   @override
-  Option<T> filter(bool Function(T) predicate) {
-    return predicate(_some) ? this : Option.none();
-  }
+  Option<T> filter(bool Function(T) predicate) =>
+      predicate(_some) ? this : Option.none();
 
   @override
   Option<U> and<U extends Object>(Option<U> optb) => optb;
@@ -193,6 +255,60 @@ class Some<T extends Object> extends Option<T> {
 
   @override
   Option<T> xor(Option<T> optb) => optb is None ? this : Option.none();
+
+  @override
+  Future<Option<U>> andThenAsync<U extends Object>(
+    Future<Option<U>> Function(T) op,
+  ) =>
+      op(_some);
+
+  @override
+  Future<Option<T>> filterAsync(Future<bool> Function(T) predicate) =>
+      predicate(_some).then((v) => v ? this : Option.none());
+
+  @override
+  Future<Option<U>> mapAsync<U extends Object>(
+    Future<U> Function(T) op,
+  ) =>
+      op(_some).then((v) => Option.some(v));
+
+  @override
+  Future<U> mapOrAsync<U>(Future<U> Function(T p1) op, U opt) => op(_some);
+
+  @override
+  Future<U> mapOrElseAsync<U>(
+    Future<U> Function(T) op,
+    Future<U> Function() def,
+  ) =>
+      op(_some);
+
+  @override
+  Future<R> matchAsync<R>(
+    Future<R> Function(T) someop,
+    Future<R> Function() noneop,
+  ) =>
+      someop(_some);
+
+  @override
+  Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) {
+    return Future.value(this);
+  }
+
+  @override
+  Future<R> whenAsync<R>({
+    required Future<R> Function(T) some,
+    required Future<R> Function() none,
+  }) =>
+      some(_some);
+
+  @override
+  Future<Result<T, E>> okOrElseAsync<E extends Object>(
+    Future<E> Function() err,
+  ) =>
+      Future.value(Result.ok(_some));
+
+  @override
+  Future<T> unwrapOrElseAsync(Future<T> Function() op) => Future.value(_some);
 }
 
 /// Type `None<T>` is an `Option` that does not contain any value.
@@ -276,4 +392,53 @@ class None<T extends Object> extends Option<T> {
 
   @override
   Option<T> xor(Option<T> optb) => optb is Some ? optb : Option.none();
+
+  @override
+  Future<Option<U>> andThenAsync<U extends Object>(
+    Future<Option<U>> Function(T) op,
+  ) =>
+      Future.value(Option.none());
+
+  @override
+  Future<Option<T>> filterAsync(Future<bool> Function(T) predicate) =>
+      Future.value(Option.none());
+
+  @override
+  Future<Option<U>> mapAsync<U extends Object>(Future<U> Function(T) op) =>
+      Future.value(Option.none());
+
+  @override
+  Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt) => Future.value(opt);
+
+  @override
+  Future<U> mapOrElseAsync<U>(
+    Future<U> Function(T) op,
+    Future<U> Function() def,
+  ) =>
+      def();
+
+  @override
+  Future<R> matchAsync<R>(
+    Future<R> Function(T) someop,
+    Future<R> Function() noneop,
+  ) =>
+      noneop();
+
+  @override
+  Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) => op();
+
+  @override
+  Future<R> whenAsync<R>({
+    required Future<R> Function(T) some,
+    required Future<R> Function() none,
+  }) =>
+      none();
+
+  @override
+  Future<Result<T, E>> okOrElseAsync<E extends Object>(
+          Future<E> Function() err) =>
+      err().then((v) => Result.err(v));
+
+  @override
+  Future<T> unwrapOrElseAsync(Future<T> Function() op) => op();
 }
