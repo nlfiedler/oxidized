@@ -33,8 +33,19 @@ void main() {
       expect(result.unwrap(), equals(2));
     });
 
+    test('catching ok values async', () async {
+      var result = await Result.asyncOf(() async => 2);
+      expect(result, isA<Ok>());
+      expect(result.unwrap(), equals(2));
+    });
+
     test('catching exceptions', () {
       var result = Result.of(() => throw Exception());
+      expect(result, isA<Err>());
+    });
+
+    test('catching exceptions async', () async {
+      var result = await Result.asyncOf(() => throw Exception());
       expect(result, isA<Err>());
     });
 
@@ -93,6 +104,27 @@ void main() {
       expect(called, equals(2));
     });
 
+    test('matching results async', () async {
+      var called = 0;
+      var returned = await Result.ok(3).matchAsync((v) async {
+        expect(v, equals(3));
+        called++;
+        return 1;
+      }, (err) => fail('oh no'));
+      expect(returned, equals(1));
+      expect(called, equals(1));
+      returned = await Result.err(Exception()).matchAsync(
+        (v) => fail('oh no'),
+        (err) async {
+          expect(err, isNotNull);
+          called++;
+          return 2;
+        },
+      );
+      expect(returned, equals(2));
+      expect(called, equals(2));
+    });
+
     test('when matching results', () {
       var called = 0;
       var returned = Result.ok(3).when(
@@ -108,6 +140,30 @@ void main() {
       returned = Result.err(Exception()).when(
         ok: (v) => fail('oh no'),
         err: (err) {
+          expect(err, isNotNull);
+          called++;
+          return 2;
+        },
+      );
+      expect(returned, equals(2));
+      expect(called, equals(2));
+    });
+
+    test('when matching results async', () async {
+      var called = 0;
+      var returned = await Result.ok(3).whenAsync(
+        ok: (v) async {
+          expect(v, equals(3));
+          called++;
+          return 1;
+        },
+        err: (err) => fail('oh no'),
+      );
+      expect(called, equals(1));
+      expect(returned, equals(1));
+      returned = await Result.err(Exception()).whenAsync(
+        ok: (v) => fail('oh no'),
+        err: (err) async {
           expect(err, isNotNull);
           called++;
           return 2;
@@ -134,11 +190,47 @@ void main() {
       );
     });
 
+    test('folding results async', () async {
+      expect(
+        await Ok(2).foldAsync(
+          (v) async => v * 3,
+          (e) async => e,
+        ),
+        equals(Ok(6)),
+      );
+      expect(
+        await Err(3).foldAsync(
+          (v) async => v,
+          (e) async => e * 3,
+        ),
+        equals(Err(9)),
+      );
+    });
+
     test('mapping values', () {
       expect(Result.ok(5).map((v) => v * 2).unwrap(), equals(10));
       expect(Result.ok(5).mapOr((v) => v * 2, 2), equals(10));
       expect(Result.ok(5).mapOrElse((v) => v * 2, (e) => 2), equals(10));
       expect(Result.err(Exception()).map((v) => fail('oh no')), isA<Err>());
+    });
+
+    test('mapping values', () async {
+      expect(
+        await Result.ok(5).mapAsync((v) async => v * 2).then((v) => v.unwrap()),
+        equals(10),
+      );
+      expect(
+        await Result.ok(5).mapOrAsync((v) async => v * 2, 2),
+        equals(10),
+      );
+      expect(
+        await Result.ok(5).mapOrElseAsync((v) async => v * 2, (e) async => 2),
+        equals(10),
+      );
+      expect(
+        await Result.err(Exception()).mapAsync((v) => fail('oh no')),
+        isA<Err>(),
+      );
     });
 
     test('mapping errors', () {
@@ -150,6 +242,33 @@ void main() {
       expect(Result.err(Exception()).mapOr((v) => fail('oh no'), 2), equals(2));
       expect(Result.err(Exception()).mapOrElse((v) => fail('oh no'), (e) => 2),
           equals(2));
+    });
+
+    test('mapping errors async', () async {
+      expect(
+        await Result.ok(5)
+            .mapErrAsync((v) => fail('oh no'))
+            .then((v) => v.unwrap()),
+        equals(5),
+      );
+      var called = 0;
+      await Result.err(Exception()).mapErrAsync((e) async => called++);
+      expect(called, equals(1));
+      expect(
+        await Result.err(Exception()).mapAsync((e) async => Exception()),
+        isA<Err>(),
+      );
+      expect(
+        await Result.err(Exception()).mapOrAsync((v) => fail('oh no'), 2),
+        equals(2),
+      );
+      expect(
+        await Result.err(Exception()).mapOrElseAsync(
+          (v) => fail('oh no'),
+          (e) async => 2,
+        ),
+        equals(2),
+      );
     });
 
     test('result as an option', () {
@@ -168,12 +287,38 @@ void main() {
           Result.err(Exception()).andThen(((v) => fail('oh no'))), isA<Err>());
     });
 
+    test('this and that async', () async {
+      expect(
+        await Result.ok(2)
+            .andThenAsync((v) async => Result.ok(v * 2))
+            .then((v) => v.unwrap()),
+        equals(4),
+      );
+      expect(
+        await Result.err(Exception()).andThenAsync(((v) => fail('oh no'))),
+        isA<Err>(),
+      );
+    });
+
     test('this or that', () {
       expect(Result.ok(2).or(Result.err(Exception())), isA<Ok>());
       expect(Result.err(Exception()).or(Result.ok(2)), isA<Ok>());
       expect(Result.ok(2).orElse(((err) => fail('oh no'))), isA<Ok>());
       expect(
         Result.err(Exception()).orElse((err) => Result.err(err)),
+        isA<Err>(),
+      );
+    });
+
+    test('this or that', () async {
+      expect(
+        await Result.ok(2).orElseAsync(((err) => fail('oh no'))),
+        isA<Ok>(),
+      );
+      expect(
+        await Result.err(Exception()).orElseAsync(
+          (err) async => Result.err(err),
+        ),
         isA<Err>(),
       );
     });
@@ -190,6 +335,17 @@ void main() {
       expect(Result.ok(5).unwrapOrElse((e) => fail('oh no')), equals(5));
       expect(Result.err(Exception()).unwrapOr(2), equals(2));
       expect(Result.err(Exception()).unwrapOrElse((e) => 2), equals(2));
+    });
+
+    test('unwrapping with a default async', () async {
+      expect(
+        await Result.ok(5).unwrapOrElseAsync((e) => fail('oh no')),
+        equals(5),
+      );
+      expect(
+        await Result.err(Exception()).unwrapOrElseAsync((e) async => 2),
+        equals(2),
+      );
     });
   });
 }
