@@ -5,6 +5,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [5.2.0] - 2022-02-10
+
+### Added
+
+- rlch: Added async methods to `Option<T>` and `Result<T, E>`.
+- rlch: Added missing type arguments to `Option<T>` and `Result<T, E>`.
+- rlch: Added code coverage for async methods.
+- rlch: Added `OptionFutureRedirector` util to redirect methods called on `Future<Option<T>>`.
+- rlch: Added `ResultFutureRedirector` util to redirect methods called on `Future<Result<T, E>>`.
+
 ## [5.1.0] - 2021-09-20
 
 ### Added
