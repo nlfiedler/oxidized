@@ -21,3 +21,19 @@ extension OptionResultTransposer<T extends Object, E extends Object>
     );
   }
 }
+
+extension FutureOptionResultTransposer<T extends Object, E extends Object>
+    on Future<Option<Result<T, E>>> {
+  /// Transposes the result of an option.
+  ///
+  /// ```dart
+  /// Some(Ok(1)) => Ok(Some(1));
+  /// Some(Err('error message')) => Err('error message');
+  /// None() => Ok(None());
+  /// ```
+  ///
+  /// See also https://doc.rust-lang.org/std/option/enum.Option.html#method.transpose
+  Future<Result<Option<T>, E>> transpose() {
+    return then((v) => v.transpose());
+  }
+}

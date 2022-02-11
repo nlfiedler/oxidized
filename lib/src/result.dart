@@ -32,6 +32,16 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
     }
   }
 
+  static Future<Result<T, E>> asyncOf<T extends Object, E extends Object>(
+    Future<T> Function() catching,
+  ) async {
+    try {
+      return Ok(await catching());
+    } catch (e) {
+      return Err(e as E);
+    }
+  }
+
   /// Returns `true` if the option is a `Ok` value.
   bool isOk();
 
@@ -47,10 +57,30 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   /// See also [when] for another way to achieve the same behavior.
   R match<R>(R Function(T) okop, R Function(E) errop);
 
+  /// Asynchronously invokes either the `okop` or the `errop` depending on the result.
+  ///
+  /// This is an attempt at providing something similar to the Rust `match`
+  /// expression, which makes it easy to get at the value or error, depending on
+  /// the result.
+  ///
+  /// See also [when] for another way to achieve the same behavior.
+  Future<R> matchAsync<R>(
+    Future<R> Function(T) okop,
+    Future<R> Function(E) errop,
+  );
+
   /// Invokes either `ok` or `err` depending on the result.
   ///
   /// Identical to [match] except that the arguments are named.
   R when<R>({required R Function(T) ok, required R Function(E) err});
+
+  /// Asynchronously invokes either `ok` or `err` depending on the result.
+  ///
+  /// Identical to [match] except that the arguments are named.
+  Future<R> whenAsync<R>({
+    required Future<R> Function(T) ok,
+    required Future<R> Function(E) err,
+  });
 
   /// Invoke either the `ok` or the `err` function based on the result.
   ///
@@ -58,6 +88,14 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   Result<U, F> fold<U extends Object, F extends Object>(
     U Function(T) ok,
     F Function(E) err,
+  );
+
+  /// Asynchronously invoke either the `ok` or the `err` function based on the result.
+  ///
+  /// This is a combination of the [map()] and [mapErr()] functions.
+  Future<Result<U, F>> foldAsync<U extends Object, F extends Object>(
+    Future<U> Function(T) ok,
+    Future<F> Function(E) err,
   );
 
   /// Converts the `Result` into an `Option` containing the value, if any.
@@ -82,6 +120,10 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   /// contained `Ok` value, leaving an `Err` value untouched.
   Result<U, E> map<U extends Object>(U Function(T) op);
 
+  /// Maps a `Result<T, E>` to `Result<U, E>` by applying an asynchronous function to a
+  /// contained `Ok` value, leaving an `Err` value untouched.
+  Future<Result<U, E>> mapAsync<U extends Object>(Future<U> Function(T) op);
+
   /// Maps a `Result<T, E>` to `Result<T, F>` by applying a function to
   /// a contained `Err` value, leaving an `Ok` value untouched.
   ///
@@ -89,13 +131,31 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   /// handling an error.
   Result<T, F> mapErr<F extends Object>(F Function(E) op);
 
+  /// Maps a `Result<T, E>` to `Result<T, F>` by applying a function to
+  /// a contained `Err` value, leaving an `Ok` value untouched.
+  ///
+  /// This function can be used to pass through a successful result while
+  /// handling an error.
+  Future<Result<T, F>> mapErrAsync<F extends Object>(Future<F> Function(E) op);
+
   /// Applies a function to the contained value (if any), or returns the
   /// provided default (if not).
   U mapOr<U>(U Function(T) op, U opt);
 
+  /// Applies an asynchronous function to the contained value (if any), or returns the
+  /// provided default (if not).
+  Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt);
+
   /// Maps a `Result<T, E>` to `U` by applying a function to a contained
   /// `Ok` value, or a fallback function to a contained `Err` value.
   U mapOrElse<U>(U Function(T) op, U Function(E) errOp);
+
+  /// Maps a `Result<T, E>` to `U` by applying a function to a contained
+  /// `Ok` value, or a fallback function to a contained `Err` value.
+  Future<U> mapOrElseAsync<U>(
+    Future<U> Function(T) op,
+    Future<U> Function(E) errOp,
+  );
 
   /// Returns `res` if the result is `Ok`, otherwise returns `this`.
   Result<U, E> and<U extends Object>(Result<U, E> res);
@@ -104,12 +164,24 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   /// `this`.
   Result<U, E> andThen<U extends Object>(Result<U, E> Function(T) op);
 
+  /// Asynchronously calls `op` with the `Ok` value if the result is `Ok`, otherwise returns
+  /// `this`.
+  Future<Result<U, E>> andThenAsync<U extends Object>(
+    Future<Result<U, E>> Function(T) op,
+  );
+
   /// Returns `res` if the result is an `Err`, otherwise returns `this`.
   Result<T, F> or<F extends Object>(Result<T, F> res);
 
   /// Calls `op` with the `Err` value if the result is `Err`, otherwise returns
   /// `this`.
   Result<T, F> orElse<F extends Object>(Result<T, F> Function(E) op);
+
+  /// Calls `op` with the `Err` value if the result is `Err`, otherwise returns
+  /// `this`.
+  Future<Result<T, F>> orElseAsync<F extends Object>(
+    Future<Result<T, F>> Function(E) op,
+  );
 
   /// Unwraps a result, yielding the content of an `Ok`.
   ///
@@ -128,6 +200,10 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   /// Unwraps a result, yielding the content of an `Ok`. If the value is an
   /// `Err` then it calls `op` with its value.
   T unwrapOrElse(T Function(E) op);
+
+  /// Unwraps a result, yielding the content of an `Ok`. If the value is an
+  /// `Err` then it asynchronously calls `op` with its value.
+  Future<T> unwrapOrElseAsync(Future<T> Function(E) op);
 }
 
 /// An `Ok<T, E>` is a `Result` that represents the successful value.
@@ -217,6 +293,64 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
 
   @override
   T unwrapOrElse(T Function(E) op) => _ok;
+
+  @override
+  Future<Result<U, E>> andThenAsync<U extends Object>(
+    Future<Result<U, E>> Function(T) op,
+  ) =>
+      op(_ok);
+
+  @override
+  Future<Result<U, F>> foldAsync<U extends Object, F extends Object>(
+    Future<U> Function(T) ok,
+    Future<F> Function(E) err,
+  ) =>
+      ok(_ok).then((v) => Ok(v));
+
+  @override
+  Future<Result<U, E>> mapAsync<U extends Object>(
+    Future<U> Function(T) op,
+  ) =>
+      op(_ok).then((v) => Ok(v));
+
+  @override
+  Future<Result<T, F>> mapErrAsync<F extends Object>(
+    Future<F> Function(E) op,
+  ) =>
+      Future.value(Ok(_ok));
+
+  @override
+  Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt) => op(_ok);
+
+  @override
+  Future<U> mapOrElseAsync<U>(
+    Future<U> Function(T) op,
+    Future<U> Function(E) errOp,
+  ) =>
+      op(_ok);
+
+  @override
+  Future<R> matchAsync<R>(
+    Future<R> Function(T) okop,
+    Future<R> Function(E) errop,
+  ) =>
+      okop(_ok);
+
+  @override
+  Future<Result<T, F>> orElseAsync<F extends Object>(
+    Future<Result<T, F>> Function(E) op,
+  ) =>
+      Future.value(Ok(_ok));
+
+  @override
+  Future<T> unwrapOrElseAsync(Future<T> Function(E) op) => Future.value(_ok);
+
+  @override
+  Future<R> whenAsync<R>({
+    required Future<R> Function(T) ok,
+    required Future<R> Function(E) err,
+  }) =>
+      ok(_ok);
 }
 
 /// An `Err<T, E>` is a `Result` that represents a failure.
@@ -306,4 +440,62 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
 
   @override
   T unwrapOrElse(T Function(E) op) => op(_err);
+
+  @override
+  Future<Result<U, E>> andThenAsync<U extends Object>(
+    Future<Result<U, E>> Function(T) op,
+  ) =>
+      Future.value(Err(_err));
+
+  @override
+  Future<Result<U, F>> foldAsync<U extends Object, F extends Object>(
+    Future<U> Function(T) ok,
+    Future<F> Function(E) err,
+  ) =>
+      err(_err).then((v) => Err(v));
+
+  @override
+  Future<Result<U, E>> mapAsync<U extends Object>(
+    Future<U> Function(T) op,
+  ) =>
+      Future.value(Err(_err));
+
+  @override
+  Future<Result<T, F>> mapErrAsync<F extends Object>(
+    Future<F> Function(E) op,
+  ) =>
+      op(_err).then((v) => Err(v));
+
+  @override
+  Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt) => Future.value(opt);
+
+  @override
+  Future<U> mapOrElseAsync<U>(
+    Future<U> Function(T) op,
+    Future<U> Function(E) errOp,
+  ) =>
+      errOp(_err);
+
+  @override
+  Future<R> matchAsync<R>(
+    Future<R> Function(T) okop,
+    Future<R> Function(E) errop,
+  ) =>
+      errop(_err);
+
+  @override
+  Future<Result<T, F>> orElseAsync<F extends Object>(
+    Future<Result<T, F>> Function(E) op,
+  ) =>
+      op(_err);
+
+  @override
+  Future<T> unwrapOrElseAsync(Future<T> Function(E) op) => op(_err);
+
+  @override
+  Future<R> whenAsync<R>({
+    required Future<R> Function(T) ok,
+    required Future<R> Function(E) err,
+  }) =>
+      err(_err);
 }
