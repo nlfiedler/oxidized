@@ -1,6 +1,8 @@
 //
 // Copyright (c) 2020 Nathan Fiedler
 //
+// ignore_for_file: prefer_const_constructors
+
 import 'package:oxidized/oxidized.dart';
 import 'package:test/test.dart';
 
@@ -48,7 +50,7 @@ void main() {
       expect(Option.none() == Option.none(), isTrue);
       expect(Option.some(2) == Option<int>.none(), isFalse);
 
-      expect(Option.some(2) == Option.some(2.0), isFalse);
+      expect(Option.some(2) == Option<double>.some(2), isFalse);
       expect(Option<int>.none() == Option<double>.none(), isFalse);
     });
 
@@ -78,10 +80,13 @@ void main() {
 
     test('matching options', () {
       var called = 0;
-      Option.some(3).match((v) {
-        expect(v, equals(3));
-        called++;
-      }, () => fail('oh no'));
+      Option.some(3).match(
+        (v) {
+          expect(v, equals(3));
+          called++;
+        },
+        () => fail('oh no'),
+      );
       expect(called, equals(1));
       Option.none().match((v) => fail('oh no'), () => called++);
       expect(called, equals(2));
@@ -89,10 +94,13 @@ void main() {
 
     test('matching options async', () async {
       var called = 0;
-      await Option.some(3).matchAsync((v) async {
-        expect(v, equals(3));
-        called++;
-      }, () => fail('oh no'));
+      await Option.some(3).matchAsync(
+        (v) async {
+          expect(v, equals(3));
+          called++;
+        },
+        () => fail('oh no'),
+      );
       expect(called, equals(1));
       await Option.none().matchAsync(
         (v) => fail('oh no'),
@@ -193,22 +201,22 @@ void main() {
     });
 
     test('filtering options', () {
-      expect(Option.some(2).filter((v) => v % 2 == 0), isA<Some>());
-      expect(Option.some(3).filter((v) => v % 2 == 0), isA<None>());
-      expect(Option.none().filter(((v) => fail('oh no'))), isA<None>());
+      expect(Option.some(2).filter((v) => v.isEven), isA<Some>());
+      expect(Option.some(3).filter((v) => v.isEven), isA<None>());
+      expect(Option.none().filter((v) => fail('oh no')), isA<None>());
     });
 
     test('filtering options async', () async {
       expect(
-        await Option.some(2).filterAsync((v) async => v % 2 == 0),
+        await Option.some(2).filterAsync((v) async => v.isEven),
         isA<Some>(),
       );
       expect(
-        await Option.some(3).filterAsync((v) async => v % 2 == 0),
+        await Option.some(3).filterAsync((v) async => v.isEven),
         isA<None>(),
       );
       expect(
-        await Option.none().filterAsync(((v) => fail('oh no'))),
+        await Option.none().filterAsync((v) => fail('oh no')),
         isA<None>(),
       );
     });
@@ -217,9 +225,11 @@ void main() {
       expect(Option.some(2).and(Option.some(1)), isA<Some>());
       expect(Option.some(2).and(Option.none()), isA<None>());
       expect(Option.none().and(Option.some(2)), isA<None>());
-      expect(Option.some(2).andThen((v) => Option.some(v * 2)).unwrap(),
-          equals(4));
-      expect(Option.none().andThen(((v) => fail('oh no'))), isA<None>());
+      expect(
+        Option.some(2).andThen((v) => Option.some(v * 2)).unwrap(),
+        equals(4),
+      );
+      expect(Option.none().andThen((v) => fail('oh no')), isA<None>());
     });
 
     test('this and that', () async {
@@ -230,7 +240,7 @@ void main() {
         equals(4),
       );
       expect(
-        await Option.none().andThenAsync(((v) => fail('oh no'))),
+        await Option.none().andThenAsync((v) => fail('oh no')),
         isA<None>(),
       );
     });
@@ -238,14 +248,14 @@ void main() {
     test('this or that', () {
       expect(Option.some(2).or(Option.none()), isA<Some>());
       expect(Option.none().or(Option.some(2)), isA<Some>());
-      expect(Option.some(2).orElse((() => fail('oh no'))), isA<Some>());
+      expect(Option.some(2).orElse(() => fail('oh no')), isA<Some>());
       expect(Option.none().orElse(() => Option.none()), isA<None>());
       expect(Option.none().orElse(() => Option.some(1)), isA<Some>());
     });
 
     test('this or that async', () async {
       expect(
-        await Option.some(2).orElseAsync((() => fail('oh no'))),
+        await Option.some(2).orElseAsync(() => fail('oh no')),
         isA<Some>(),
       );
       expect(
