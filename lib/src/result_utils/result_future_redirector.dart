@@ -1,5 +1,6 @@
 part of 'result_utils.dart';
 
+/// enable [Result<T, E>] methods in a [Future<Result<T, E>>]
 extension ResultFutureRedirector<T extends Object, E extends Object>
     on Future<Result<T, E>> {
   /// Returns `true` if the option is a `Ok` value.
@@ -18,7 +19,8 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   Future<R> match<R>(R Function(T) okop, R Function(E) errop) =>
       then((result) => result.match(okop, errop));
 
-  /// Asynchronously invokes either the `okop` or the `errop` depending on the result.
+  /// Asynchronously invokes either the `okop` or the `errop` depending on
+  /// the result.
   ///
   /// This is an attempt at providing something similar to the Rust `match`
   /// expression, which makes it easy to get at the value or error, depending on
@@ -55,7 +57,8 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   ) =>
       then((result) => result.fold(ok, err));
 
-  /// Asynchronously invoke either the `ok` or the `err` function based on the result.
+  /// Asynchronously invoke either the `ok` or the `err` function based on
+  /// the result.
   ///
   /// This is a combination of the [map()] and [mapErr()] functions.
   Future<Result<U, F>> foldAsync<U extends Object, F extends Object>(
@@ -87,8 +90,8 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   Future<Result<U, E>> map<U extends Object>(U Function(T) op) =>
       then((result) => result.map(op));
 
-  /// Maps a `Result<T, E>` to `Result<U, E>` by applying an asynchronous function to a
-  /// contained `Ok` value, leaving an `Err` value untouched.
+  /// Maps a `Result<T, E>` to `Result<U, E>` by applying an asynchronous
+  /// function to a contained `Ok` value, leaving an `Err` value untouched.
   Future<Result<U, E>> mapAsync<U extends Object>(Future<U> Function(T) op) =>
       then((result) => result.mapAsync(op));
 
@@ -106,7 +109,8 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   /// This function can be used to pass through a successful result while
   /// handling an error.
   Future<Result<T, F>> mapErrAsync<F extends Object>(
-          Future<F> Function(E) op) =>
+    Future<F> Function(E) op,
+  ) =>
       then((result) => result.mapErrAsync(op));
 
   /// Applies a function to the contained value (if any), or returns the
@@ -114,7 +118,8 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   Future<U> mapOr<U>(U Function(T) op, U opt) =>
       then((result) => result.mapOr(op, opt));
 
-  /// Applies an asynchronous function to the contained value (if any), or returns the
+  /// Applies an asynchronous function to the contained value (if any), or
+  /// returns the
   /// provided default (if not).
   Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt) =>
       then((result) => result.mapOrAsync(op, opt));
@@ -141,8 +146,8 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   Future<Result<U, E>> andThen<U extends Object>(Result<U, E> Function(T) op) =>
       then((result) => result.andThen(op));
 
-  /// Asynchronously calls `op` with the `Ok` value if the result is `Ok`, otherwise returns
-  /// `this`.
+  /// Asynchronously calls `op` with the `Ok` value if the result is `Ok`,
+  /// otherwise returns `this`.
   Future<Result<U, E>> andThenAsync<U extends Object>(
     Future<Result<U, E>> Function(T) op,
   ) =>
