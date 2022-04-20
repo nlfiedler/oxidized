@@ -1,5 +1,6 @@
 part of 'option_utils.dart';
 
+/// Collection of utils on [Future<Option<T>>]
 extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   /// Returns an nullable that represents this optional value.
   ///
@@ -22,7 +23,8 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   Future<R> match<R>(R Function(T) someop, R Function() noneop) =>
       then((v) => v.match(someop, noneop));
 
-  /// Asynchronously invokes either the `someop` or the `noneop` depending on the option.
+  /// Asynchronously invokes either the `someop` or the `noneop` depending on
+  /// the option.
   ///
   /// This is an attempt at providing something similar to the Rust `match`
   /// expression, which makes it easy to handle both cases at once.
@@ -37,8 +39,10 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   /// Invokes either `some` or `none` depending on the option.
   ///
   /// Identical to [match] except that the arguments are named.
-  Future<R> when<R>(
-          {required R Function(T) some, required R Function() none}) =>
+  Future<R> when<R>({
+    required R Function(T) some,
+    required R Function() none,
+  }) =>
       then((v) => v.when(some: some, none: none));
 
   /// Asynchronously invokes either `some` or `none` depending on the option.
@@ -75,8 +79,8 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   Future<Option<U>> map<U extends Object>(U Function(T) op) =>
       then((v) => v.map(op));
 
-  /// Maps an `Option<T>` to `Option<U>` by applying an asynchronous function to a contained
-  /// `Some` value. Otherwise returns a `None`.
+  /// Maps an `Option<T>` to `Option<U>` by applying an asynchronous function
+  /// to a contained `Some` value. Otherwise returns a `None`.
   Future<Option<U>> mapAsync<U extends Object>(Future<U> Function(T) op) =>
       then((v) => v.mapAsync(op));
 
@@ -84,8 +88,8 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   /// provided default (if not).
   Future<U> mapOr<U>(U Function(T) op, U opt) => then((v) => v.mapOr(op, opt));
 
-  /// Applies an asynchronous function to the contained value (if any), or returns the
-  /// provided default (if not).
+  /// Applies an asynchronous function to the contained value (if any),
+  /// or returns the provided default (if not).
   Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt) =>
       then((v) => v.mapOrAsync(op, opt));
 
@@ -94,8 +98,8 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   Future<U> mapOrElse<U>(U Function(T) op, U Function() def) =>
       then((v) => v.mapOrElse(op, def));
 
-  /// Maps an `Option<T>` to `U` by applying an asynchronous function to a contained `T`
-  /// value, or computes a default (if not).
+  /// Maps an `Option<T>` to `U` by applying an asynchronous function to
+  /// a contained `T` value, or computes a default (if not).
   Future<U> mapOrElseAsync<U>(
     Future<U> Function(T) op,
     Future<U> Function() def,
@@ -144,8 +148,8 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   Future<Option<U>> andThen<U extends Object>(Option<U> Function(T) op) =>
       then((v) => v.andThen(op));
 
-  /// Returns `None` if the option is `None`, otherwise asynchronously calls `op` with the
-  /// wrapped value and returns the result.
+  /// Returns `None` if the option is `None`, otherwise asynchronously calls
+  /// `op` with the wrapped value and returns the result.
   Future<Option<U>> andThenAsync<U extends Object>(
     Future<Option<U>> Function(T) op,
   ) =>
@@ -159,8 +163,8 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   Future<Option<T>> orElse(Option<T> Function() op) =>
       then((v) => v.orElse(op));
 
-  /// Returns the option if it contains a value, otherwise asynchronously calls `op` and
-  /// returns the result.
+  /// Returns the option if it contains a value, otherwise asynchronously
+  /// calls `op` and returns the result.
   Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) =>
       then((v) => v.orElseAsync(op));
 
