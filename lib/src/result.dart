@@ -313,13 +313,13 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
     Future<U> Function(T) ok,
     Future<F> Function(E) err,
   ) =>
-      ok(_ok).then((v) => Ok(v));
+      ok(_ok).then(Ok.new);
 
   @override
   Future<Result<U, E>> mapAsync<U extends Object>(
     Future<U> Function(T) op,
   ) =>
-      op(_ok).then((v) => Ok(v));
+      op(_ok).then(Ok.new);
 
   @override
   Future<Result<T, F>> mapErrAsync<F extends Object>(
@@ -462,7 +462,7 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
     Future<U> Function(T) ok,
     Future<F> Function(E) err,
   ) =>
-      err(_err).then((v) => Err(v));
+      err(_err).then(Err.new);
 
   @override
   Future<Result<U, E>> mapAsync<U extends Object>(
@@ -474,7 +474,7 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
   Future<Result<T, F>> mapErrAsync<F extends Object>(
     Future<F> Function(E) op,
   ) =>
-      op(_err).then((v) => Err(v));
+      op(_err).then(Err.new);
 
   @override
   Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt) => Future.value(opt);

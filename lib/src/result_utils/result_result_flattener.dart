@@ -15,11 +15,8 @@ extension ResultResultFlattener<T extends Object, E extends Object>
   /// - https://doc.rust-lang.org/std/result/enum.Result.html#method.flatten
   Result<T, E> flatten() {
     return match(
-      (result) => result.match(
-        (val) => Ok(val),
-        (err) => Err(err),
-      ),
-      (err) => Err(err),
+      (result) => result.match(Ok.new, Err.new),
+      Err.new,
     );
   }
 }

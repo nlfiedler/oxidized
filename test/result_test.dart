@@ -315,10 +315,7 @@ void main() {
       expect(Result.ok(2).or(Result.err(Exception())), isA<Ok>());
       expect(Result.err(Exception()).or(Result.ok(2)), isA<Ok>());
       expect(Result.ok(2).orElse((err) => fail('oh no')), isA<Ok>());
-      expect(
-        Result.err(Exception()).orElse((err) => Result.err(err)),
-        isA<Err>(),
-      );
+      expect(Result.err(Exception()).orElse(Result.err), isA<Err>());
     });
 
     test('this or that', () async {

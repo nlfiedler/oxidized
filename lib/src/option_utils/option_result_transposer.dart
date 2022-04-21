@@ -16,7 +16,7 @@ extension OptionResultTransposer<T extends Object, E extends Object>
     return match(
       (result) => result.match(
         (value) => Ok(Some(value)),
-        (err) => Err(err),
+        Err.new,
       ),
       () => Ok(None<T>()),
     );
