@@ -9,7 +9,7 @@ import 'package:oxidized/src/exceptions.dart';
 
 part 'option/option_base.dart';
 part 'option/option_match_mixin.dart';
-part 'option/option_match_async_mixin.dart';
+part 'option/option_match_async_extension.dart';
 
 /// Option is a type that represents either some value (`Some`) or none
 /// (`None`).
@@ -17,7 +17,7 @@ part 'option/option_match_async_mixin.dart';
 /// `Option<T>` is the type used for returning an optional value. It is an
 /// object with a `Some` value, and `None`, representing no value.
 abstract class Option<T extends Object> extends OptionBase<T>
-    with OptionMatchMixin<T>, OptionMatchAsyncMixin<T> {
+    with OptionMatchMixin<T> {
   /// Create a [Some] option with the given value.
   const factory Option.some(T v) = Some;
 
