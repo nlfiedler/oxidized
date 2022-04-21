@@ -10,6 +10,7 @@ import 'package:oxidized/src/exceptions.dart';
 part 'option/option_base.dart';
 part 'option/option_match_mixin.dart';
 part 'option/option_match_async_extension.dart';
+part 'option/option_unwrap_async_extension.dart';
 part 'option/option_unwrap_mixin.dart';
 
 /// Option is a type that represents either some value ([Some]) or none
@@ -34,9 +35,6 @@ abstract class Option<T extends Object> extends OptionBase<T>
   factory Option.from(T? v) {
     return v == null ? None<T>() : Some(v);
   }
-
-  /// Returns the contained value or asynchronously computes it from a closure.
-  Future<T> unwrapOrElseAsync(Future<T> Function() op);
 
   /// Maps an `Option<T>` to `Option<U>` by applying a function to a contained
   /// `Some` value. Otherwise returns a `None`.
@@ -218,9 +216,6 @@ class Some<T extends Object> extends Option<T> {
     Future<E> Function() err,
   ) =>
       Future.value(Result.ok(_some));
-
-  @override
-  Future<T> unwrapOrElseAsync(Future<T> Function() op) => Future.value(_some);
 }
 
 /// Type `None<T>` is an `Option` that does not contain any value.
@@ -310,7 +305,4 @@ class None<T extends Object> extends Option<T> {
     Future<E> Function() err,
   ) =>
       err().then((v) => Result.err(v));
-
-  @override
-  Future<T> unwrapOrElseAsync(Future<T> Function() op) => op();
 }
