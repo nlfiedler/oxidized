@@ -5,9 +5,9 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:oxidized/oxidized.dart';
-import 'package:oxidized/src/exceptions.dart';
 
 part 'option/option_base.dart';
+part 'option/option_map_filter_mixin.dart';
 part 'option/option_match_mixin.dart';
 part 'option/option_match_async_extension.dart';
 part 'option/option_unwrap_async_extension.dart';
@@ -19,7 +19,7 @@ part 'option/option_unwrap_mixin.dart';
 /// [Option<T>] is the type used for returning an optional value. It is an
 /// object with a [Some] value, and [None], representing no value.
 abstract class Option<T extends Object> extends OptionBase<T>
-    with OptionUnwrapMixin<T>, OptionMatchMixin<T> {
+    with OptionUnwrapMixin<T>, OptionMatchMixin<T>, OptionMapFilterMixin<T> {
   /// Create a [Some] option with the given value.
   const factory Option.some(T v) = Some;
 
@@ -36,25 +36,13 @@ abstract class Option<T extends Object> extends OptionBase<T>
     return v == null ? None<T>() : Some(v);
   }
 
-  /// Maps an `Option<T>` to `Option<U>` by applying a function to a contained
-  /// `Some` value. Otherwise returns a `None`.
-  Option<U> map<U extends Object>(U Function(T) op);
-
   /// Maps an `Option<T>` to `Option<U>` by applying an asynchronous function
   /// to a contained `Some` value. Otherwise returns a `None`.
   Future<Option<U>> mapAsync<U extends Object>(Future<U> Function(T) op);
 
-  /// Applies a function to the contained value (if any), or returns the
-  /// provided default (if not).
-  U mapOr<U>(U Function(T) op, U opt);
-
   /// Applies an asynchronous function to the contained value (if any), or
   /// returns the provided default (if not).
   Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt);
-
-  /// Maps an `Option<T>` to `U` by applying a function to a contained `T`
-  /// value, or computes a default (if not).
-  U mapOrElse<U>(U Function(T) op, U Function() def);
 
   /// Maps an `Option<T>` to `U` by applying an asynchronous function to
   /// a contained `T` value, or computes a default (if not).
@@ -76,13 +64,6 @@ abstract class Option<T extends Object> extends OptionBase<T>
   Future<Result<T, E>> okOrElseAsync<E extends Object>(
     Future<E> Function() err,
   );
-
-  /// Returns `None` if the option is `None`, otherwise calls `predicate` with
-  /// the wrapped value and returns:
-  ///
-  /// * `Some(t)` if predicate returns `true` (where `t` is the wrapped value)
-  /// * `None` if predicate returns `false`.
-  Option<T> filter(bool Function(T) predicate);
 
   /// Returns `None` if the option is `None`, otherwise calls `predicate` with
   /// the wrapped value and returns:
@@ -147,23 +128,10 @@ class Some<T extends Object> extends Option<T> {
   bool isNone() => false;
 
   @override
-  Option<U> map<U extends Object>(U Function(T) op) => Option.some(op(_some));
-
-  @override
-  U mapOr<U>(U Function(T) op, U opt) => op(_some);
-
-  @override
-  U mapOrElse<U>(U Function(T) op, U Function() def) => op(_some);
-
-  @override
   Result<T, E> okOr<E extends Object>(E err) => Result.ok(_some);
 
   @override
   Result<T, E> okOrElse<E extends Object>(E Function() err) => Result.ok(_some);
-
-  @override
-  Option<T> filter(bool Function(T) predicate) =>
-      predicate(_some) ? this : None<T>();
 
   @override
   Option<U> and<U extends Object>(Option<U> optb) => optb;
@@ -240,23 +208,11 @@ class None<T extends Object> extends Option<T> {
   bool isNone() => true;
 
   @override
-  Option<U> map<U extends Object>(U Function(T) op) => None<U>();
-
-  @override
-  U mapOr<U>(U Function(T) op, U opt) => opt;
-
-  @override
-  U mapOrElse<U>(U Function(T) op, U Function() def) => def();
-
-  @override
   Result<T, E> okOr<E extends Object>(E err) => Result.err(err);
 
   @override
   Result<T, E> okOrElse<E extends Object>(E Function() err) =>
       Result.err(err());
-
-  @override
-  Option<T> filter(bool Function(T) predicate) => None<T>();
 
   @override
   Option<U> and<U extends Object>(Option<U> optb) => None<U>();
