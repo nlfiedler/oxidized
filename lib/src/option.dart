@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
 import 'package:oxidized/oxidized.dart';
 
 part 'option/option_base.dart';
+part 'option/option_logic_mixin.dart';
 part 'option/option_map_filter_async_extension.dart';
 part 'option/option_map_filter_mixin.dart';
 part 'option/option_match_mixin.dart';
@@ -25,6 +26,7 @@ abstract class Option<T extends Object> extends OptionBase<T>
         OptionUnwrapMixin<T>,
         OptionMatchMixin<T>,
         OptionMapFilterMixin<T>,
+        OptionLoginMixin<T>,
         OptionToResultMixin<T> {
   /// Create a [Some] option with the given value.
   const factory Option.some(T v) = Some;
@@ -48,33 +50,15 @@ abstract class Option<T extends Object> extends OptionBase<T>
     Future<E> Function() err,
   );
 
-  /// Returns `None` if the option is `None`, otherwise returns `optb`.
-  Option<U> and<U extends Object>(Option<U> optb);
-
-  /// Returns `None` if the option is `None`, otherwise calls `op` with the
-  /// wrapped value and returns the result.
-  Option<U> andThen<U extends Object>(Option<U> Function(T) op);
-
   /// Returns `None` if the option is `None`, otherwise asynchronously calls
   /// `op` with the wrapped value and returns the result.
   Future<Option<U>> andThenAsync<U extends Object>(
     Future<Option<U>> Function(T) op,
   );
 
-  /// Returns the option if it contains a value, otherwise returns `optb`.
-  Option<T> or(Option<T> optb);
-
-  /// Returns the option if it contains a value, otherwise calls `op` and
-  /// returns the result.
-  Option<T> orElse(Option<T> Function() op);
-
   /// Returns the option if it contains a value, otherwise asynchronously calls
   /// `op` and returns the result.
   Future<Option<T>> orElseAsync(Future<Option<T>> Function() op);
-
-  /// Returns `Some` if exactly one of `this`, `optb` is `Some`, otherwise
-  /// returns `None`.
-  Option<T> xor(Option<T> optb);
 }
 
 /// Type `Some<T>` is an `Option` that contains a value.
@@ -96,27 +80,6 @@ class Some<T extends Object> extends Option<T> {
 
   @override
   T? toNullable() => _some;
-
-  @override
-  bool isSome() => true;
-
-  @override
-  bool isNone() => false;
-
-  @override
-  Option<U> and<U extends Object>(Option<U> optb) => optb;
-
-  @override
-  Option<U> andThen<U extends Object>(Option<U> Function(T) op) => op(_some);
-
-  @override
-  Option<T> or(Option<T> optb) => this;
-
-  @override
-  Option<T> orElse(Option<T> Function() op) => this;
-
-  @override
-  Option<T> xor(Option<T> optb) => optb is None ? this : None<T>();
 
   @override
   Future<Option<U>> andThenAsync<U extends Object>(
@@ -150,27 +113,6 @@ class None<T extends Object> extends Option<T> {
 
   @override
   T? toNullable() => null;
-
-  @override
-  bool isSome() => false;
-
-  @override
-  bool isNone() => true;
-
-  @override
-  Option<U> and<U extends Object>(Option<U> optb) => None<U>();
-
-  @override
-  Option<U> andThen<U extends Object>(Option<U> Function(T) op) => None<U>();
-
-  @override
-  Option<T> or(Option<T> optb) => optb;
-
-  @override
-  Option<T> orElse(Option<T> Function() op) => op();
-
-  @override
-  Option<T> xor(Option<T> optb) => optb is Some ? optb : None<T>();
 
   @override
   Future<Option<U>> andThenAsync<U extends Object>(

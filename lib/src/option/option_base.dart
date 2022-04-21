@@ -15,8 +15,8 @@ abstract class OptionBase<T extends Object> extends Equatable {
   T? toNullable();
 
   /// Returns `true` if the option is a `Some` value.
-  bool isSome();
+  bool isSome() => this is Some;
 
   /// Returns `true` if the option is a `None` value.
-  bool isNone();
+  bool isNone() => this is None;
 }
