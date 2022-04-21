@@ -11,6 +11,7 @@ part 'option/option_map_filter_async_extension.dart';
 part 'option/option_map_filter_mixin.dart';
 part 'option/option_match_mixin.dart';
 part 'option/option_match_async_extension.dart';
+part 'option/option_to_result_mixin.dart';
 part 'option/option_unwrap_async_extension.dart';
 part 'option/option_unwrap_mixin.dart';
 
@@ -20,7 +21,11 @@ part 'option/option_unwrap_mixin.dart';
 /// [Option<T>] is the type used for returning an optional value. It is an
 /// object with a [Some] value, and [None], representing no value.
 abstract class Option<T extends Object> extends OptionBase<T>
-    with OptionUnwrapMixin<T>, OptionMatchMixin<T>, OptionMapFilterMixin<T> {
+    with
+        OptionUnwrapMixin<T>,
+        OptionMatchMixin<T>,
+        OptionMapFilterMixin<T>,
+        OptionToResultMixin<T> {
   /// Create a [Some] option with the given value.
   const factory Option.some(T v) = Some;
 
@@ -36,14 +41,6 @@ abstract class Option<T extends Object> extends OptionBase<T>
   factory Option.from(T? v) {
     return v == null ? None<T>() : Some(v);
   }
-
-  /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
-  /// `Ok(v)` and `None` to `Err(err)`.
-  Result<T, E> okOr<E extends Object>(E err);
-
-  /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
-  /// `Ok(v)` and `None` to `Err(err())`.
-  Result<T, E> okOrElse<E extends Object>(E Function() err);
 
   /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
   /// `Ok(v)` and `None` to `Err(err())`.
@@ -107,12 +104,6 @@ class Some<T extends Object> extends Option<T> {
   bool isNone() => false;
 
   @override
-  Result<T, E> okOr<E extends Object>(E err) => Result.ok(_some);
-
-  @override
-  Result<T, E> okOrElse<E extends Object>(E Function() err) => Result.ok(_some);
-
-  @override
   Option<U> and<U extends Object>(Option<U> optb) => optb;
 
   @override
@@ -165,13 +156,6 @@ class None<T extends Object> extends Option<T> {
 
   @override
   bool isNone() => true;
-
-  @override
-  Result<T, E> okOr<E extends Object>(E err) => Result.err(err);
-
-  @override
-  Result<T, E> okOrElse<E extends Object>(E Function() err) =>
-      Result.err(err());
 
   @override
   Option<U> and<U extends Object>(Option<U> optb) => None<U>();
