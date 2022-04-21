@@ -5,7 +5,7 @@ mixin OptionUnwrapMixin<T extends Object> on OptionBase<T> {
   /// Unwraps an option, yielding the content of a `Some`.
   ///
   /// Throws an `Exception` if the value is a `None`, with the passed message.
-  T expect(String msg) => toNullable() ?? (throw Exception(msg));
+  T expect(String msg) => toNullable() ?? (throw OptionUnwrapException<T>(msg));
 
   /// Unwraps an option, yielding the content of a `Some`.
   ///
@@ -24,10 +24,14 @@ mixin OptionUnwrapMixin<T extends Object> on OptionBase<T> {
 /// {@endtemplate}
 class OptionUnwrapException<T> implements Exception {
   /// {@macro oxidized.OptionUnwrapException}
-  OptionUnwrapException();
+  OptionUnwrapException([String? message])
+      : message = message ?? 'A None<$T>() cannot be unwrapped';
+
+  /// The message associated with this exception.
+  final String message;
 
   @override
   String toString() {
-    return 'OptionUnwrapException: A None<T>() cannot be unwrapped';
+    return 'OptionUnwrapException: $message';
   }
 }
