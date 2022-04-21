@@ -14,7 +14,7 @@ part 'option/option_base.dart';
 ///
 /// `Option<T>` is the type used for returning an optional value. It is an
 /// object with a `Some` value, and `None`, representing no value.
-abstract class Option<T extends Object> implements _OptionBase<T> {
+abstract class Option<T extends Object> implements OptionBase<T> {
   /// Create a [Some] option with the given value.
   const factory Option.some(T v) = Some;
 
