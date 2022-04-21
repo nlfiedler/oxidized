@@ -1,4 +1,4 @@
-part of '../option.dart';
+part of 'option_async_utils.dart';
 
 /// Collection of method for async map and filter in a [Option]
 extension OptionMapFilterAsyncX<T extends Object> on Option<T> {
@@ -7,7 +7,7 @@ extension OptionMapFilterAsyncX<T extends Object> on Option<T> {
   Future<Option<U>> mapAsync<U extends Object>(Future<U> Function(T) op) {
     final val = toNullable();
     if (val != null) {
-      return op(val).then((v) => Some(v));
+      return op(val).then(Some.new);
     } else {
       return Future.value(None<U>());
     }

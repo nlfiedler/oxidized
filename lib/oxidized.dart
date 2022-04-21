@@ -92,6 +92,7 @@
 library oxidized;
 
 export 'src/option.dart';
+export 'src/option_async_utils/option_async_utils.dart';
 export 'src/option_utils/option_utils.dart';
 export 'src/result.dart';
 export 'src/result_utils/result_utils.dart';

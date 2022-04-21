@@ -1,4 +1,4 @@
-part of '../option.dart';
+part of 'option_async_utils.dart';
 
 /// Async methods related to unwrap for [Option]
 extension OptionUnwrapAsyncX<T extends Object> on OptionBase<T> {

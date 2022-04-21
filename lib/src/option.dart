@@ -1,20 +1,14 @@
 //
 // Copyright (c) 2020 Nathan Fiedler
 //
-import 'dart:async';
-
 import 'package:equatable/equatable.dart';
 import 'package:oxidized/oxidized.dart';
 
 part 'option/option_base.dart';
-part 'option/option_logic_async_extension.dart';
 part 'option/option_logic_mixin.dart';
-part 'option/option_map_filter_async_extension.dart';
 part 'option/option_map_filter_mixin.dart';
 part 'option/option_match_mixin.dart';
-part 'option/option_match_async_extension.dart';
 part 'option/option_to_result_mixin.dart';
-part 'option/option_unwrap_async_extension.dart';
 part 'option/option_unwrap_mixin.dart';
 
 /// Option is a type that represents either some value ([Some]) or none

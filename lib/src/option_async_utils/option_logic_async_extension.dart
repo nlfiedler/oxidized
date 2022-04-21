@@ -1,4 +1,4 @@
-part of '../option.dart';
+part of 'option_async_utils.dart';
 
 /// Async method like and, or, xor
 extension OptionLoginAsyncExtension<T extends Object> on Option<T> {

@@ -1,4 +1,4 @@
-part of '../option.dart';
+part of 'option_async_utils.dart';
 
 /// Collection of methods to work with [Future] on [OptionMatchMixin]
 extension OptionMatchAsyncX<T extends Object> on OptionMatchMixin<T> {
