@@ -5,25 +5,28 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:oxidized/oxidized.dart';
+import 'package:oxidized/src/exceptions.dart';
+
+part 'option/option_base.dart';
 
 /// Option is a type that represents either some value (`Some`) or none
 /// (`None`).
 ///
 /// `Option<T>` is the type used for returning an optional value. It is an
 /// object with a `Some` value, and `None`, representing no value.
-abstract class Option<T extends Object> extends Equatable {
-  /// Create a `Some` option with the given value.
+abstract class Option<T extends Object> implements _OptionBase<T> {
+  /// Create a [Some] option with the given value.
   const factory Option.some(T v) = Some;
 
-  /// Create a `None` option with no value.
+  /// Create a [None] option with no value.
   const factory Option.none() = None;
 
   const Option._();
 
   /// Create a option from a nullable value.
   ///
-  /// Passing a non-null value will result in a `Some`.
-  /// Passing a `null` value will result in a `None`.
+  /// Passing a non-null value will result in a [Some].
+  /// Passing a `null` value will result in a [None].
   factory Option.from(T? v) {
     return v == null ? None<T>() : Some(v);
   }
@@ -58,12 +61,15 @@ abstract class Option<T extends Object> extends Equatable {
   Future<R> matchAsync<R>(
     Future<R> Function(T) someop,
     Future<R> Function() noneop,
-  );
+  ) =>
+      match(someop, noneop);
 
   /// Invokes either `some` or `none` depending on the option.
   ///
   /// Identical to [match] except that the arguments are named.
-  R when<R>({required R Function(T) some, required R Function() none});
+  R when<R>({required R Function(T) some, required R Function() none}) {
+    return match(some, none);
+  }
 
   /// Asynchronously invokes either `some` or `none` depending on the option.
   ///
@@ -71,7 +77,8 @@ abstract class Option<T extends Object> extends Equatable {
   Future<R> whenAsync<R>({
     required Future<R> Function(T) some,
     required Future<R> Function() none,
-  });
+  }) =>
+      match(some, none);
 
   /// Unwraps an option, yielding the content of a `Some`.
   ///
@@ -285,13 +292,6 @@ class Some<T extends Object> extends Option<T> {
       op(_some);
 
   @override
-  Future<R> matchAsync<R>(
-    Future<R> Function(T) someop,
-    Future<R> Function() noneop,
-  ) =>
-      someop(_some);
-
-  @override
   Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) {
     return Future.value(this);
   }
@@ -350,9 +350,7 @@ class None<T extends Object> extends Option<T> {
   }
 
   @override
-  T unwrap() {
-    throw Exception();
-  }
+  T unwrap() => throw OptionUnwrapException<T>();
 
   @override
   T unwrapOr(T opt) => opt;
@@ -417,13 +415,6 @@ class None<T extends Object> extends Option<T> {
     Future<U> Function() def,
   ) =>
       def();
-
-  @override
-  Future<R> matchAsync<R>(
-    Future<R> Function(T) someop,
-    Future<R> Function() noneop,
-  ) =>
-      noneop();
 
   @override
   Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) => op();
