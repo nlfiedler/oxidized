@@ -18,3 +18,16 @@ mixin OptionUnwrapMixin<T extends Object> on OptionBase<T> {
   /// Returns the contained value or computes it from a closure.
   T unwrapOrElse(T Function() op) => toNullable() ?? op();
 }
+
+/// {@template oxidized.OptionUnwrapException}
+/// [Exception] thrown when unwrapping an [Option] that is [None].
+/// {@endtemplate}
+class OptionUnwrapException<T> implements Exception {
+  /// {@macro oxidized.OptionUnwrapException}
+  OptionUnwrapException();
+
+  @override
+  String toString() {
+    return 'OptionUnwrapException: A None<T>() cannot be unwrapped';
+  }
+}
