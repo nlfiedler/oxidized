@@ -9,6 +9,7 @@ import 'package:oxidized/src/exceptions.dart';
 
 part 'option/option_base.dart';
 part 'option/option_match_mixin.dart';
+part 'option/option_match_async_mixin.dart';
 
 /// Option is a type that represents either some value (`Some`) or none
 /// (`None`).
@@ -16,7 +17,7 @@ part 'option/option_match_mixin.dart';
 /// `Option<T>` is the type used for returning an optional value. It is an
 /// object with a `Some` value, and `None`, representing no value.
 abstract class Option<T extends Object> extends OptionBase<T>
-    with OptionMatchMixin<T> {
+    with OptionMatchMixin<T>, OptionMatchAsyncMixin<T> {
   /// Create a [Some] option with the given value.
   const factory Option.some(T v) = Some;
 
@@ -32,28 +33,6 @@ abstract class Option<T extends Object> extends OptionBase<T>
   factory Option.from(T? v) {
     return v == null ? None<T>() : Some(v);
   }
-
-  /// Asynchronously invokes either the `someop` or the `noneop` depending on
-  /// the option.
-  ///
-  /// This is an attempt at providing something similar to the Rust `match`
-  /// expression, which makes it easy to handle both cases at once.
-  ///
-  /// See also [when] for another way to achieve the same behavior.
-  Future<R> matchAsync<R>(
-    Future<R> Function(T) someop,
-    Future<R> Function() noneop,
-  ) =>
-      match(someop, noneop);
-
-  /// Asynchronously invokes either `some` or `none` depending on the option.
-  ///
-  /// Identical to [match] except that the arguments are named.
-  Future<R> whenAsync<R>({
-    required Future<R> Function(T) some,
-    required Future<R> Function() none,
-  }) =>
-      match(some, none);
 
   /// Unwraps an option, yielding the content of a `Some`.
   ///
@@ -262,13 +241,6 @@ class Some<T extends Object> extends Option<T> {
   }
 
   @override
-  Future<R> whenAsync<R>({
-    required Future<R> Function(T) some,
-    required Future<R> Function() none,
-  }) =>
-      some(_some);
-
-  @override
   Future<Result<T, E>> okOrElseAsync<E extends Object>(
     Future<E> Function() err,
   ) =>
@@ -373,13 +345,6 @@ class None<T extends Object> extends Option<T> {
 
   @override
   Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) => op();
-
-  @override
-  Future<R> whenAsync<R>({
-    required Future<R> Function(T) some,
-    required Future<R> Function() none,
-  }) =>
-      none();
 
   @override
   Future<Result<T, E>> okOrElseAsync<E extends Object>(
