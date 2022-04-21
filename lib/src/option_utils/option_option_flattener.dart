@@ -15,7 +15,7 @@ extension OptionOptionFlattener<T extends Object> on Option<Option<T>> {
   Option<T> flatten() {
     return match(
       (option) => option,
-      () => const None(),
+      () => None<T>(),
     );
   }
 }
