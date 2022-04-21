@@ -51,13 +51,6 @@ abstract class Option<T extends Object> extends OptionBase<T>
     Future<E> Function() err,
   );
 
-  /// Returns `None` if the option is `None`, otherwise calls `predicate` with
-  /// the wrapped value and returns:
-  ///
-  /// * `Some(t)` if predicate returns `true` (where `t` is the wrapped value)
-  /// * `None` if predicate returns `false`.
-  Future<Option<T>> filterAsync(Future<bool> Function(T) predicate);
-
   /// Returns `None` if the option is `None`, otherwise returns `optb`.
   Option<U> and<U extends Object>(Option<U> optb);
 
@@ -141,10 +134,6 @@ class Some<T extends Object> extends Option<T> {
       op(_some);
 
   @override
-  Future<Option<T>> filterAsync(Future<bool> Function(T) predicate) =>
-      predicate(_some).then((v) => v ? this : None<T>());
-
-  @override
   Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) {
     return Future.value(this);
   }
@@ -204,10 +193,6 @@ class None<T extends Object> extends Option<T> {
     Future<Option<U>> Function(T) op,
   ) =>
       Future.value(None<U>());
-
-  @override
-  Future<Option<T>> filterAsync(Future<bool> Function(T) predicate) =>
-      Future.value(None<T>());
 
   @override
   Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) => op();
