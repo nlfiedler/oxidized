@@ -10,6 +10,7 @@ import 'package:oxidized/src/exceptions.dart';
 part 'option/option_base.dart';
 part 'option/option_match_mixin.dart';
 part 'option/option_match_async_extension.dart';
+part 'option/option_unwrap_mixin.dart';
 
 /// Option is a type that represents either some value (`Some`) or none
 /// (`None`).
@@ -17,7 +18,7 @@ part 'option/option_match_async_extension.dart';
 /// `Option<T>` is the type used for returning an optional value. It is an
 /// object with a `Some` value, and `None`, representing no value.
 abstract class Option<T extends Object> extends OptionBase<T>
-    with OptionMatchMixin<T> {
+    with OptionUnwrapMixin<T>, OptionMatchMixin<T> {
   /// Create a [Some] option with the given value.
   const factory Option.some(T v) = Some;
 
@@ -33,22 +34,6 @@ abstract class Option<T extends Object> extends OptionBase<T>
   factory Option.from(T? v) {
     return v == null ? None<T>() : Some(v);
   }
-
-  /// Unwraps an option, yielding the content of a `Some`.
-  ///
-  /// Throws an `Exception` if the value is a `None`, with the passed message.
-  T expect(String msg);
-
-  /// Unwraps an option, yielding the content of a `Some`.
-  ///
-  /// Throws an empty exception if this result is a `None`.
-  T unwrap();
-
-  /// Returns the contained value or a default.
-  T unwrapOr(T opt);
-
-  /// Returns the contained value or computes it from a closure.
-  T unwrapOrElse(T Function() op);
 
   /// Returns the contained value or asynchronously computes it from a closure.
   Future<T> unwrapOrElseAsync(Future<T> Function() op);
@@ -164,18 +149,6 @@ class Some<T extends Object> extends Option<T> {
   bool isNone() => false;
 
   @override
-  T expect(String msg) => _some;
-
-  @override
-  T unwrap() => _some;
-
-  @override
-  T unwrapOr(T opt) => _some;
-
-  @override
-  T unwrapOrElse(T Function() op) => _some;
-
-  @override
   Option<U> map<U extends Object>(U Function(T) op) => Option.some(op(_some));
 
   @override
@@ -270,20 +243,6 @@ class None<T extends Object> extends Option<T> {
 
   @override
   bool isNone() => true;
-
-  @override
-  T expect(String msg) {
-    throw Exception(msg);
-  }
-
-  @override
-  T unwrap() => throw OptionUnwrapException<T>();
-
-  @override
-  T unwrapOr(T opt) => opt;
-
-  @override
-  T unwrapOrElse(T Function() op) => op();
 
   @override
   Option<U> map<U extends Object>(U Function(T) op) => None<U>();
