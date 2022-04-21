@@ -12,11 +12,11 @@ part 'option/option_match_mixin.dart';
 part 'option/option_match_async_extension.dart';
 part 'option/option_unwrap_mixin.dart';
 
-/// Option is a type that represents either some value (`Some`) or none
-/// (`None`).
+/// Option is a type that represents either some value ([Some]) or none
+/// ([None]).
 ///
-/// `Option<T>` is the type used for returning an optional value. It is an
-/// object with a `Some` value, and `None`, representing no value.
+/// [Option<T>] is the type used for returning an optional value. It is an
+/// object with a [Some] value, and [None], representing no value.
 abstract class Option<T extends Object> extends OptionBase<T>
     with OptionUnwrapMixin<T>, OptionMatchMixin<T> {
   /// Create a [Some] option with the given value.
