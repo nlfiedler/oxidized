@@ -15,14 +15,15 @@ part 'option/option_match_mixin.dart';
 ///
 /// `Option<T>` is the type used for returning an optional value. It is an
 /// object with a `Some` value, and `None`, representing no value.
-abstract class Option<T extends Object> with OptionMatchMixin<T> {
+abstract class Option<T extends Object> extends OptionBase<T>
+    with OptionMatchMixin<T> {
   /// Create a [Some] option with the given value.
   const factory Option.some(T v) = Some;
 
   /// Create a [None] option with no value.
   const factory Option.none() = None;
 
-  const Option._();
+  const Option._() : super._();
 
   /// Create a option from a nullable value.
   ///
@@ -31,18 +32,6 @@ abstract class Option<T extends Object> with OptionMatchMixin<T> {
   factory Option.from(T? v) {
     return v == null ? None<T>() : Some(v);
   }
-
-  /// Returns an nullable that represents this optional value.
-  ///
-  /// If Option has Some value, it will return that value.
-  /// If Option has a None value, it will return `null`.
-  T? toNullable();
-
-  /// Returns `true` if the option is a `Some` value.
-  bool isSome();
-
-  /// Returns `true` if the option is a `None` value.
-  bool isNone();
 
   /// Asynchronously invokes either the `someop` or the `noneop` depending on
   /// the option.
