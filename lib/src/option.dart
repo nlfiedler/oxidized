@@ -176,9 +176,6 @@ class Some<T extends Object> extends Option<T> {
   List<Object?> get props => [_some];
 
   @override
-  bool get stringify => true;
-
-  @override
   T? toNullable() => _some;
 
   @override
@@ -186,13 +183,6 @@ class Some<T extends Object> extends Option<T> {
 
   @override
   bool isNone() => false;
-
-  @override
-  R match<R>(R Function(T) someop, R Function() noneop) => someop(_some);
-
-  @override
-  R when<R>({required R Function(T) some, required R Function() none}) =>
-      some(_some);
 
   @override
   T expect(String msg) => _some;
@@ -301,9 +291,6 @@ class None<T extends Object> extends Option<T> {
   List<Object> get props => [];
 
   @override
-  bool get stringify => true;
-
-  @override
   T? toNullable() => null;
 
   @override
@@ -311,13 +298,6 @@ class None<T extends Object> extends Option<T> {
 
   @override
   bool isNone() => true;
-
-  @override
-  R match<R>(R Function(T) someop, R Function() noneop) => noneop();
-
-  @override
-  R when<R>({required R Function(T) some, required R Function() none}) =>
-      none();
 
   @override
   T expect(String msg) {
