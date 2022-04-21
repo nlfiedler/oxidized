@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
 import 'package:oxidized/oxidized.dart';
 
 part 'option/option_base.dart';
+part 'option/option_map_filter_async_extension.dart';
 part 'option/option_map_filter_mixin.dart';
 part 'option/option_match_mixin.dart';
 part 'option/option_match_async_extension.dart';
@@ -35,21 +36,6 @@ abstract class Option<T extends Object> extends OptionBase<T>
   factory Option.from(T? v) {
     return v == null ? None<T>() : Some(v);
   }
-
-  /// Maps an `Option<T>` to `Option<U>` by applying an asynchronous function
-  /// to a contained `Some` value. Otherwise returns a `None`.
-  Future<Option<U>> mapAsync<U extends Object>(Future<U> Function(T) op);
-
-  /// Applies an asynchronous function to the contained value (if any), or
-  /// returns the provided default (if not).
-  Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt);
-
-  /// Maps an `Option<T>` to `U` by applying an asynchronous function to
-  /// a contained `T` value, or computes a default (if not).
-  Future<U> mapOrElseAsync<U>(
-    Future<U> Function(T) op,
-    Future<U> Function() def,
-  );
 
   /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
   /// `Ok(v)` and `None` to `Err(err)`.
@@ -159,22 +145,6 @@ class Some<T extends Object> extends Option<T> {
       predicate(_some).then((v) => v ? this : None<T>());
 
   @override
-  Future<Option<U>> mapAsync<U extends Object>(
-    Future<U> Function(T) op,
-  ) =>
-      op(_some).then((v) => Option.some(v));
-
-  @override
-  Future<U> mapOrAsync<U>(Future<U> Function(T p1) op, U opt) => op(_some);
-
-  @override
-  Future<U> mapOrElseAsync<U>(
-    Future<U> Function(T) op,
-    Future<U> Function() def,
-  ) =>
-      op(_some);
-
-  @override
   Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) {
     return Future.value(this);
   }
@@ -238,20 +208,6 @@ class None<T extends Object> extends Option<T> {
   @override
   Future<Option<T>> filterAsync(Future<bool> Function(T) predicate) =>
       Future.value(None<T>());
-
-  @override
-  Future<Option<U>> mapAsync<U extends Object>(Future<U> Function(T) op) =>
-      Future.value(None<U>());
-
-  @override
-  Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt) => Future.value(opt);
-
-  @override
-  Future<U> mapOrElseAsync<U>(
-    Future<U> Function(T) op,
-    Future<U> Function() def,
-  ) =>
-      def();
 
   @override
   Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) => op();
