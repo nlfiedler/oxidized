@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
 import 'package:oxidized/oxidized.dart';
 
 part 'option/option_base.dart';
+part 'option/option_logic_async_extension.dart';
 part 'option/option_logic_mixin.dart';
 part 'option/option_map_filter_async_extension.dart';
 part 'option/option_map_filter_mixin.dart';
@@ -43,22 +44,6 @@ abstract class Option<T extends Object> extends OptionBase<T>
   factory Option.from(T? v) {
     return v == null ? None<T>() : Some(v);
   }
-
-  /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
-  /// `Ok(v)` and `None` to `Err(err())`.
-  Future<Result<T, E>> okOrElseAsync<E extends Object>(
-    Future<E> Function() err,
-  );
-
-  /// Returns `None` if the option is `None`, otherwise asynchronously calls
-  /// `op` with the wrapped value and returns the result.
-  Future<Option<U>> andThenAsync<U extends Object>(
-    Future<Option<U>> Function(T) op,
-  );
-
-  /// Returns the option if it contains a value, otherwise asynchronously calls
-  /// `op` and returns the result.
-  Future<Option<T>> orElseAsync(Future<Option<T>> Function() op);
 }
 
 /// Type `Some<T>` is an `Option` that contains a value.
@@ -80,23 +65,6 @@ class Some<T extends Object> extends Option<T> {
 
   @override
   T? toNullable() => _some;
-
-  @override
-  Future<Option<U>> andThenAsync<U extends Object>(
-    Future<Option<U>> Function(T) op,
-  ) =>
-      op(_some);
-
-  @override
-  Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) {
-    return Future.value(this);
-  }
-
-  @override
-  Future<Result<T, E>> okOrElseAsync<E extends Object>(
-    Future<E> Function() err,
-  ) =>
-      Future.value(Result.ok(_some));
 }
 
 /// Type `None<T>` is an `Option` that does not contain any value.
@@ -113,19 +81,4 @@ class None<T extends Object> extends Option<T> {
 
   @override
   T? toNullable() => null;
-
-  @override
-  Future<Option<U>> andThenAsync<U extends Object>(
-    Future<Option<U>> Function(T) op,
-  ) =>
-      Future.value(None<U>());
-
-  @override
-  Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) => op();
-
-  @override
-  Future<Result<T, E>> okOrElseAsync<E extends Object>(
-    Future<E> Function() err,
-  ) =>
-      err().then((v) => Result.err(v));
 }
