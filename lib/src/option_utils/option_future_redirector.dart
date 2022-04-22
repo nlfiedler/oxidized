@@ -32,9 +32,9 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   }) =>
       matchAsync(some, none);
 
-  /// Unwraps an option, yielding the content of a `Some`.
+  /// Unwraps an option, yielding the content of a [Some].
   ///
-  /// Throws an `Exception` if the value is a `None`, with the passed message.
+  /// Throws an `Exception` if the value is a [None], with the passed message.
   Future<T> expect(String msg) => then((v) => v.expect(msg));
 
   /// Unwraps an option, yielding the content of a `Some`.
@@ -69,14 +69,7 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
   /// `Ok(v)` and `None` to `Err(err())`.
   Future<Result<T, E>> okOrElse<E extends Object>(E Function() err) =>
-      then((v) => v.okOrElse(err));
-
-  /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
-  /// `Ok(v)` and `None` to `Err(err())`.
-  Future<Result<T, E>> okOrElseAsync<E extends Object>(
-    Future<E> Function() err,
-  ) =>
-      then((v) => v.okOrElseAsync(err));
+      okOrElseAsync(err);
 
   /// Returns `None` if the option is `None`, otherwise calls `predicate` with
   /// the wrapped value and returns:
@@ -93,27 +86,14 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   /// Returns `None` if the option is `None`, otherwise calls `op` with the
   /// wrapped value and returns the result.
   Future<Option<U>> andThen<U extends Object>(Option<U> Function(T) op) =>
-      then((v) => v.andThen(op));
-
-  /// Returns `None` if the option is `None`, otherwise asynchronously calls
-  /// `op` with the wrapped value and returns the result.
-  Future<Option<U>> andThenAsync<U extends Object>(
-    Future<Option<U>> Function(T) op,
-  ) =>
-      then((v) => v.andThenAsync(op));
+      andThenAsync(op);
 
   /// Returns the option if it contains a value, otherwise returns `optb`.
   Future<Option<T>> or(Option<T> optb) => then((v) => v.or(optb));
 
   /// Returns the option if it contains a value, otherwise calls `op` and
   /// returns the result.
-  Future<Option<T>> orElse(Option<T> Function() op) =>
-      then((v) => v.orElse(op));
-
-  /// Returns the option if it contains a value, otherwise asynchronously
-  /// calls `op` and returns the result.
-  Future<Option<T>> orElseAsync(Future<Option<T>> Function() op) =>
-      then((v) => v.orElseAsync(op));
+  Future<Option<T>> orElse(Option<T> Function() op) => orElseAsync(op);
 
   /// Returns `Some` if exactly one of `this`, `optb` is `Some`, otherwise
   /// returns `None`.
