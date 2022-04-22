@@ -259,9 +259,7 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
   T expect(String msg) => _ok;
 
   @override
-  E expectErr(String msg) {
-    throw Exception(msg);
-  }
+  E expectErr(String msg) => throw ResultUnwrapException<T, E>(msg);
 
   @override
   Result<U, E> map<U extends Object>(U Function(T) op) => Ok(op(_ok));
@@ -292,9 +290,7 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
   T unwrap() => _ok;
 
   @override
-  E unwrapErr() {
-    throw Exception(_ok.toString());
-  }
+  E unwrapErr() => throw ResultUnwrapException<T, E>(_ok.toString());
 
   @override
   T unwrapOr(T opt) => _ok;
@@ -407,7 +403,7 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
 
   @override
   T expect(String msg) {
-    throw Exception(msg);
+    throw ResultUnwrapException<T, E>(msg);
   }
 
   @override
@@ -440,7 +436,7 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
       op(_err);
 
   @override
-  T unwrap() => throw _err;
+  T unwrap() => throw ResultUnwrapException<T, E>();
 
   @override
   E unwrapErr() => _err;
@@ -508,4 +504,21 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
     required Future<R> Function(E) err,
   }) =>
       err(_err);
+}
+
+/// {@template oxidized.ResultUnwrapException}
+/// [Exception] thrown when unwrapping an [Option] that is [None].
+/// {@endtemplate}
+class ResultUnwrapException<T, E> implements Exception {
+  /// {@macro oxidized.ResultUnwrapException}
+  ResultUnwrapException([String? message])
+      : message = message ?? 'A Result<$T, $E>() cannot be unwrapped';
+
+  /// The message associated with this exception.
+  final String message;
+
+  @override
+  String toString() {
+    return 'ResultUnwrapException: $message';
+  }
 }
