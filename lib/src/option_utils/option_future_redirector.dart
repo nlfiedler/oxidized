@@ -53,32 +53,14 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   Future<Option<U>> map<U extends Object>(U Function(T) op) =>
       then((v) => v.map(op));
 
-  /// Maps an `Option<T>` to `Option<U>` by applying an asynchronous function
-  /// to a contained `Some` value. Otherwise returns a `None`.
-  Future<Option<U>> mapAsync<U extends Object>(Future<U> Function(T) op) =>
-      then((v) => v.mapAsync(op));
-
   /// Applies a function to the contained value (if any), or returns the
   /// provided default (if not).
   Future<U> mapOr<U>(U Function(T) op, U opt) => then((v) => v.mapOr(op, opt));
-
-  /// Applies an asynchronous function to the contained value (if any),
-  /// or returns the provided default (if not).
-  Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt) =>
-      then((v) => v.mapOrAsync(op, opt));
 
   /// Maps an `Option<T>` to `U` by applying a function to a contained `T`
   /// value, or computes a default (if not).
   Future<U> mapOrElse<U>(U Function(T) op, U Function() def) =>
       then((v) => v.mapOrElse(op, def));
-
-  /// Maps an `Option<T>` to `U` by applying an asynchronous function to
-  /// a contained `T` value, or computes a default (if not).
-  Future<U> mapOrElseAsync<U>(
-    Future<U> Function(T) op,
-    Future<U> Function() def,
-  ) =>
-      then((v) => v.mapOrElseAsync(op, def));
 
   /// Transforms the `Option<T>` into a `Result<T, E>`, mapping `Some(v)` to
   /// `Ok(v)` and `None` to `Err(err)`.
@@ -104,14 +86,6 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   /// * `None` if predicate returns `false`.
   Future<Option<T>> filter(bool Function(T) predicate) =>
       then((v) => v.filter(predicate));
-
-  /// Returns `None` if the option is `None`, otherwise calls `predicate` with
-  /// the wrapped value and returns:
-  ///
-  /// * `Some(t)` if predicate returns `true` (where `t` is the wrapped value)
-  /// * `None` if predicate returns `false`.
-  Future<Option<T>> filterAsync(Future<bool> Function(T) predicate) =>
-      then((v) => v.filterAsync(predicate));
 
   /// Returns `None` if the option is `None`, otherwise returns `optb`.
   Future<Option<U>> and<U extends Object>(Option<U> optb) =>
