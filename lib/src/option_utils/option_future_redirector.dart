@@ -23,19 +23,6 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   Future<R> match<R>(R Function(T) someop, R Function() noneop) =>
       then((v) => v.match(someop, noneop));
 
-  /// Asynchronously invokes either the `someop` or the `noneop` depending on
-  /// the option.
-  ///
-  /// This is an attempt at providing something similar to the Rust `match`
-  /// expression, which makes it easy to handle both cases at once.
-  ///
-  /// See also [when] for another way to achieve the same behavior.
-  Future<R> matchAsync<R>(
-    Future<R> Function(T) someop,
-    Future<R> Function() noneop,
-  ) =>
-      then((v) => v.matchAsync(someop, noneop));
-
   /// Invokes either `some` or `none` depending on the option.
   ///
   /// Identical to [match] except that the arguments are named.
@@ -44,15 +31,6 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
     required R Function() none,
   }) =>
       then((v) => v.when(some: some, none: none));
-
-  /// Asynchronously invokes either `some` or `none` depending on the option.
-  ///
-  /// Identical to [match] except that the arguments are named.
-  Future<R> whenAsync<R>({
-    required Future<R> Function(T) some,
-    required Future<R> Function() none,
-  }) =>
-      then((v) => v.whenAsync(some: some, none: none));
 
   /// Unwraps an option, yielding the content of a `Some`.
   ///

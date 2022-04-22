@@ -1,5 +1,7 @@
 library oxidized_option_async_utils;
 
+import 'dart:async';
+
 import 'package:oxidized/src/option.dart';
 import 'package:oxidized/src/result.dart';
 
