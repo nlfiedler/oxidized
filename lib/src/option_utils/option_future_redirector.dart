@@ -46,7 +46,7 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
   Future<T> unwrapOr(T opt) => then((v) => v.unwrapOr(opt));
 
   /// Returns the contained value or computes it from a closure.
-  Future<T> unwrapOrElse(T Function() op) => then((v) => v.unwrapOrElse(op));
+  Future<T> unwrapOrElse(T Function() op) => unwrapOrElseAsync(op);
 
   /// Maps an `Option<T>` to `Option<U>` by applying a function to a contained
   /// `Some` value. Otherwise returns a `None`.
