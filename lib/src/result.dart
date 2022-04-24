@@ -3,7 +3,7 @@
 //
 
 import 'package:equatable/equatable.dart';
-import './option.dart';
+import 'package:oxidized/src/option.dart';
 
 /// Result is a type that represents either success (`Ok`) or failure (`Err`).
 ///
@@ -11,13 +11,13 @@ import './option.dart';
 /// an object with an `Ok` value, representing success and containing a value,
 /// and `Err`, representing error and containing an error value.
 abstract class Result<T extends Object, E extends Object> extends Equatable {
-  Result();
+  const Result._();
 
   /// Create an `Ok` result with the given value.
-  factory Result.ok(T s) = Ok;
+  const factory Result.ok(T s) = Ok;
 
   /// Create an `Err` result with the given error.
-  factory Result.err(E err) = Err;
+  const factory Result.err(E err) = Err;
 
   /// Call the `catching` function and produce a `Result`.
   ///
@@ -32,6 +32,10 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
     }
   }
 
+  /// Call the `catching` function and produce a `Future<Result<T, E>>`.
+  ///
+  /// see also:
+  /// - `Result.of`
   static Future<Result<T, E>> asyncOf<T extends Object, E extends Object>(
     Future<T> Function() catching,
   ) async {
@@ -57,7 +61,8 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   /// See also [when] for another way to achieve the same behavior.
   R match<R>(R Function(T) okop, R Function(E) errop);
 
-  /// Asynchronously invokes either the `okop` or the `errop` depending on the result.
+  /// Asynchronously invokes either the `okop` or the `errop` depending on
+  /// the result.
   ///
   /// This is an attempt at providing something similar to the Rust `match`
   /// expression, which makes it easy to get at the value or error, depending on
@@ -90,7 +95,8 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
     F Function(E) err,
   );
 
-  /// Asynchronously invoke either the `ok` or the `err` function based on the result.
+  /// Asynchronously invoke either the `ok` or the `err` function based on
+  /// the result.
   ///
   /// This is a combination of the [map()] and [mapErr()] functions.
   Future<Result<U, F>> foldAsync<U extends Object, F extends Object>(
@@ -120,8 +126,8 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   /// contained `Ok` value, leaving an `Err` value untouched.
   Result<U, E> map<U extends Object>(U Function(T) op);
 
-  /// Maps a `Result<T, E>` to `Result<U, E>` by applying an asynchronous function to a
-  /// contained `Ok` value, leaving an `Err` value untouched.
+  /// Maps a `Result<T, E>` to `Result<U, E>` by applying an asynchronous
+  /// function to a contained `Ok` value, leaving an `Err` value untouched.
   Future<Result<U, E>> mapAsync<U extends Object>(Future<U> Function(T) op);
 
   /// Maps a `Result<T, E>` to `Result<T, F>` by applying a function to
@@ -142,8 +148,8 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   /// provided default (if not).
   U mapOr<U>(U Function(T) op, U opt);
 
-  /// Applies an asynchronous function to the contained value (if any), or returns the
-  /// provided default (if not).
+  /// Applies an asynchronous function to the contained value (if any),
+  /// or returns the provided default (if not).
   Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt);
 
   /// Maps a `Result<T, E>` to `U` by applying a function to a contained
@@ -164,8 +170,8 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   /// `this`.
   Result<U, E> andThen<U extends Object>(Result<U, E> Function(T) op);
 
-  /// Asynchronously calls `op` with the `Ok` value if the result is `Ok`, otherwise returns
-  /// `this`.
+  /// Asynchronously calls `op` with the `Ok` value if the result is `Ok`,
+  /// otherwise returns `this`.
   Future<Result<U, E>> andThenAsync<U extends Object>(
     Future<Result<U, E>> Function(T) op,
   );
@@ -211,10 +217,12 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
 /// You can create an `Ok` using either the `Ok()` constructor or the
 /// `Result.ok()` factory constructor.
 class Ok<T extends Object, E extends Object> extends Result<T, E> {
-  final T _ok;
-
   /// Create an `Ok` result with the given value.
-  Ok(T s) : _ok = s;
+  const Ok(T s)
+      : _ok = s,
+        super._();
+
+  final T _ok;
 
   @override
   List<Object?> get props => [_ok];
@@ -242,18 +250,16 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
       Ok(ok(_ok));
 
   @override
-  Option<T> ok() => Option.some(_ok);
+  Option<T> ok() => Some<T>(_ok);
 
   @override
-  Option<E> err() => Option.none();
+  Option<E> err() => None<E>();
 
   @override
   T expect(String msg) => _ok;
 
   @override
-  E expectErr(String msg) {
-    throw Exception(msg);
-  }
+  E expectErr(String msg) => throw ResultUnwrapException<T, E>(msg);
 
   @override
   Result<U, E> map<U extends Object>(U Function(T) op) => Ok(op(_ok));
@@ -284,9 +290,7 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
   T unwrap() => _ok;
 
   @override
-  E unwrapErr() {
-    throw Exception(_ok.toString());
-  }
+  E unwrapErr() => throw ResultUnwrapException<T, E>(_ok.toString());
 
   @override
   T unwrapOr(T opt) => _ok;
@@ -305,13 +309,13 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
     Future<U> Function(T) ok,
     Future<F> Function(E) err,
   ) =>
-      ok(_ok).then((v) => Ok(v));
+      ok(_ok).then(Ok.new);
 
   @override
   Future<Result<U, E>> mapAsync<U extends Object>(
     Future<U> Function(T) op,
   ) =>
-      op(_ok).then((v) => Ok(v));
+      op(_ok).then(Ok.new);
 
   @override
   Future<Result<T, F>> mapErrAsync<F extends Object>(
@@ -358,10 +362,12 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
 /// You can create an `Err` using either the `Err(E)` constructor or the
 /// `Result.err(E)` factory constructor.
 class Err<T extends Object, E extends Object> extends Result<T, E> {
-  final E _err;
-
   /// Create an `Err` result with the given error.
-  Err(E err) : _err = err;
+  const Err(E err)
+      : _err = err,
+        super._();
+
+  final E _err;
 
   @override
   List<Object?> get props => [_err];
@@ -390,14 +396,14 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
       Err(err(_err));
 
   @override
-  Option<T> ok() => Option.none();
+  Option<T> ok() => None<T>();
 
   @override
-  Option<E> err() => Option.some(_err);
+  Option<E> err() => Some<E>(_err);
 
   @override
   T expect(String msg) {
-    throw Exception(msg);
+    throw ResultUnwrapException<T, E>(msg);
   }
 
   @override
@@ -430,7 +436,7 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
       op(_err);
 
   @override
-  T unwrap() => throw _err;
+  T unwrap() => throw ResultUnwrapException<T, E>();
 
   @override
   E unwrapErr() => _err;
@@ -452,7 +458,7 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
     Future<U> Function(T) ok,
     Future<F> Function(E) err,
   ) =>
-      err(_err).then((v) => Err(v));
+      err(_err).then(Err.new);
 
   @override
   Future<Result<U, E>> mapAsync<U extends Object>(
@@ -464,7 +470,7 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
   Future<Result<T, F>> mapErrAsync<F extends Object>(
     Future<F> Function(E) op,
   ) =>
-      op(_err).then((v) => Err(v));
+      op(_err).then(Err.new);
 
   @override
   Future<U> mapOrAsync<U>(Future<U> Function(T) op, U opt) => Future.value(opt);
@@ -498,4 +504,21 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
     required Future<R> Function(E) err,
   }) =>
       err(_err);
+}
+
+/// {@template oxidized.ResultUnwrapException}
+/// [Exception] thrown when unwrapping an [Option] that is [None].
+/// {@endtemplate}
+class ResultUnwrapException<T, E> implements Exception {
+  /// {@macro oxidized.ResultUnwrapException}
+  ResultUnwrapException([String? message])
+      : message = message ?? 'A Result<$T, $E>() cannot be unwrapped';
+
+  /// The message associated with this exception.
+  final String message;
+
+  @override
+  String toString() {
+    return 'ResultUnwrapException: $message';
+  }
 }

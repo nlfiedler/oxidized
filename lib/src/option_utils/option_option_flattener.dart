@@ -1,5 +1,6 @@
 part of 'option_utils.dart';
 
+/// Flat utils on [Option<Option<T>>]
 extension OptionOptionFlattener<T extends Object> on Option<Option<T>> {
   /// Flats an option of an option.
   ///
@@ -14,19 +15,20 @@ extension OptionOptionFlattener<T extends Object> on Option<Option<T>> {
   Option<T> flatten() {
     return match(
       (option) => option,
-      () => None(),
+      None.new,
     );
   }
 }
 
+/// Flat utils on [Future<Option<Option<T>>>]
 extension FutureOptionOptionFlattener<T extends Object>
     on Future<Option<Option<T>>> {
   /// Flats an option of an option.
   ///
   /// ```dart
-  /// Some(Some(1)) => Some(1)
-  /// Some(None()) => None()
-  /// None() => None()
+  /// Future.value(Some(Some(1))) => Future.value(Some(1))
+  /// Future.value(Some(None())) => Future.value(None())
+  /// Future.value(None()) => Future.value(None())
   /// ```
   ///
   /// See also:

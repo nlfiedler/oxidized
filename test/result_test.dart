@@ -1,6 +1,8 @@
 //
 // Copyright (c) 2020 Nathan Fiedler
 //
+// ignore_for_file: prefer_const_constructors
+
 import 'package:oxidized/oxidized.dart';
 import 'package:test/test.dart';
 
@@ -14,7 +16,7 @@ void main() {
     });
 
     test('unit value is an ok unit', () {
-      var result = Result.ok(unit);
+      final result = Result.ok(unit);
       expect(result, isA<Ok>());
       expect(result, isNot(isA<Err>()));
       expect(result.unwrap(), equals(unit));
@@ -28,24 +30,24 @@ void main() {
     });
 
     test('catching ok values', () {
-      var result = Result.of(() => 2);
+      final result = Result.of(() => 2);
       expect(result, isA<Ok>());
       expect(result.unwrap(), equals(2));
     });
 
     test('catching ok values async', () async {
-      var result = await Result.asyncOf(() async => 2);
+      final result = await Result.asyncOf(() async => 2);
       expect(result, isA<Ok>());
       expect(result.unwrap(), equals(2));
     });
 
     test('catching exceptions', () {
-      var result = Result.of(() => throw Exception());
+      final result = Result.of(() => throw Exception());
       expect(result, isA<Err>());
     });
 
     test('catching exceptions async', () async {
-      var result = await Result.asyncOf(() => throw Exception());
+      final result = await Result.asyncOf(() => throw Exception());
       expect(result, isA<Err>());
     });
 
@@ -60,10 +62,12 @@ void main() {
       expect(Result.ok(2), equals(Result.ok(2)));
       expect(Result<int, String>.ok(2), isNot(equals(Result<int, bool>.ok(2))));
       expect(Result.ok(2), isNot(equals(Result.ok(3))));
-      var exc = Exception();
+      final exc = Exception();
       expect(Result.err(exc), equals(Result.err(exc)));
       expect(
-          Err<int, Exception>(exc), isNot(equals(Err<double, Exception>(exc))));
+        Err<int, Exception>(exc),
+        isNot(equals(Err<double, Exception>(exc))),
+      );
       // exceptions do not compare equally?
       expect(Result.err(Exception()), isNot(equals(Result.err(Exception()))));
       expect(Result.ok(2), isNot(equals(Result.err(Exception()))));
@@ -88,11 +92,14 @@ void main() {
 
     test('matching results', () {
       var called = 0;
-      var returned = Result.ok(3).match((v) {
-        expect(v, equals(3));
-        called++;
-        return 1;
-      }, (err) => fail('oh no'));
+      var returned = Result.ok(3).match(
+        (v) {
+          expect(v, equals(3));
+          called++;
+          return 1;
+        },
+        (err) => fail('oh no'),
+      );
       expect(returned, equals(1));
       expect(called, equals(1));
       returned = Result.err(Exception()).match((v) => fail('oh no'), (err) {
@@ -106,11 +113,14 @@ void main() {
 
     test('matching results async', () async {
       var called = 0;
-      var returned = await Result.ok(3).matchAsync((v) async {
-        expect(v, equals(3));
-        called++;
-        return 1;
-      }, (err) => fail('oh no'));
+      var returned = await Result.ok(3).matchAsync(
+        (v) async {
+          expect(v, equals(3));
+          called++;
+          return 1;
+        },
+        (err) => fail('oh no'),
+      );
       expect(returned, equals(1));
       expect(called, equals(1));
       returned = await Result.err(Exception()).matchAsync(
@@ -240,8 +250,10 @@ void main() {
       expect(called, equals(1));
       expect(Result.err(Exception()).map((e) => Exception()), isA<Err>());
       expect(Result.err(Exception()).mapOr((v) => fail('oh no'), 2), equals(2));
-      expect(Result.err(Exception()).mapOrElse((v) => fail('oh no'), (e) => 2),
-          equals(2));
+      expect(
+        Result.err(Exception()).mapOrElse((v) => fail('oh no'), (e) => 2),
+        equals(2),
+      );
     });
 
     test('mapping errors async', () async {
@@ -283,8 +295,7 @@ void main() {
       expect(Result.ok(2).and(Result.err(Exception())), isA<Err>());
       expect(Result.err(Exception()).and(Result.ok(2)), isA<Err>());
       expect(Result.ok(2).andThen((v) => Result.ok(v * 2)).unwrap(), equals(4));
-      expect(
-          Result.err(Exception()).andThen(((v) => fail('oh no'))), isA<Err>());
+      expect(Result.err(Exception()).andThen((v) => fail('oh no')), isA<Err>());
     });
 
     test('this and that async', () async {
@@ -295,7 +306,7 @@ void main() {
         equals(4),
       );
       expect(
-        await Result.err(Exception()).andThenAsync(((v) => fail('oh no'))),
+        await Result.err(Exception()).andThenAsync((v) => fail('oh no')),
         isA<Err>(),
       );
     });
@@ -303,16 +314,13 @@ void main() {
     test('this or that', () {
       expect(Result.ok(2).or(Result.err(Exception())), isA<Ok>());
       expect(Result.err(Exception()).or(Result.ok(2)), isA<Ok>());
-      expect(Result.ok(2).orElse(((err) => fail('oh no'))), isA<Ok>());
-      expect(
-        Result.err(Exception()).orElse((err) => Result.err(err)),
-        isA<Err>(),
-      );
+      expect(Result.ok(2).orElse((err) => fail('oh no')), isA<Ok>());
+      expect(Result.err(Exception()).orElse(Result.err), isA<Err>());
     });
 
     test('this or that', () async {
       expect(
-        await Result.ok(2).orElseAsync(((err) => fail('oh no'))),
+        await Result.ok(2).orElseAsync((err) => fail('oh no')),
         isA<Ok>(),
       );
       expect(

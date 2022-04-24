@@ -1,5 +1,6 @@
 part of 'result_utils.dart';
 
+/// Utils for flatting [Result<Result<T, E>>]
 extension ResultResultFlattener<T extends Object, E extends Object>
     on Result<Result<T, E>, E> {
   /// Flattens a [Result<Result<T, E>, E>] into a [Result<T, E>]
@@ -14,23 +15,21 @@ extension ResultResultFlattener<T extends Object, E extends Object>
   /// - https://doc.rust-lang.org/std/result/enum.Result.html#method.flatten
   Result<T, E> flatten() {
     return match(
-      (result) => result.match(
-        (val) => Ok(val),
-        (err) => Err(err),
-      ),
-      (err) => Err(err),
+      (result) => result.match(Ok.new, Err.new),
+      Err.new,
     );
   }
 }
 
+/// Utils for flatting [Result<Result<T, E>>] in a [Future]
 extension FutureResultResultFlattener<T extends Object, E extends Object>
     on Future<Result<Result<T, E>, E>> {
   /// Flattens a [Result<Result<T, E>, E>] into a [Result<T, E>]
   ///
   /// ```dart
-  /// Ok(Ok(value)) => Ok(value)
-  /// Ok(Err(error)) => Err(error)
-  /// Err(error) => Err(error)
+  /// Future.valueOk(Ok(value))) => Future.value(Ok(value))
+  /// Future.valueOk(Err(error))) => Future.value(Err(error))
+  /// Future.valueErr(error)) => Future.value(Err(error))
   /// ```
   ///
   /// See also:
