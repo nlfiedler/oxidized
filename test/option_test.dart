@@ -24,16 +24,5 @@ void main() {
       expect(Option.from(1).isSome(), isTrue);
       expect(Option<int>.from(null).isNone(), isTrue);
     });
-
-    test('unwrapping with a default async', () async {
-      expect(
-        await Option.some(5).unwrapOrElseAsync(() async => 2),
-        equals(5),
-      );
-      expect(
-        await Option.none().unwrapOrElseAsync(() async => 2),
-        equals(2),
-      );
-    });
   });
 }
