@@ -23,4 +23,18 @@ void main() {
     expect(Option.none().unwrapOr(2), equals(2));
     expect(Option.none().unwrapOrElse(() => 2), equals(2));
   });
+
+  group('OptionUnwrapException', () {
+    test('toString', () {
+      expect(
+        OptionUnwrapException<int>().toString().contains('None<int>'),
+        isTrue,
+      );
+
+      expect(
+        OptionUnwrapException<int>('oh no').toString().contains('oh no'),
+        isTrue,
+      );
+    });
+  });
 }

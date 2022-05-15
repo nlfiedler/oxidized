@@ -31,7 +31,5 @@ class OptionUnwrapException<T> implements Exception {
   final String message;
 
   @override
-  String toString() {
-    return 'OptionUnwrapException: $message';
-  }
+  String toString() => 'OptionUnwrapException: $message';
 }
