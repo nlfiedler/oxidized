@@ -1,7 +1,7 @@
 part of '../option.dart';
 
 /// Methods like and, or, xor
-mixin OptionLoginMixin<T extends Object> on OptionBase<T> {
+mixin OptionLogicMixin<T extends Object> on OptionBase<T> {
   /// Returns [None] if the option is [None], otherwise returns `optb`.
   Option<U> and<U extends Object>(Option<U> optb) {
     return isSome() ? optb : None<U>();
