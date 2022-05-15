@@ -11,8 +11,6 @@ void main() {
     test('some has a value', () {
       expect(Option.some(1), isA<Some>());
       expect(Some(1), isA<Some>());
-      expect(Some(1).isSome(), isTrue);
-      expect(Some(1).isNone(), isFalse);
     });
 
     test('none has nothing', () {
@@ -20,8 +18,6 @@ void main() {
       expect(None(), isA<None>());
       expect(None(), equals(None()));
       expect(None() == None(), isTrue);
-      expect(None().isSome(), isFalse);
-      expect(None().isNone(), isTrue);
     });
 
     test('from nullable', () {
@@ -29,29 +25,9 @@ void main() {
       expect(Option<int>.from(null).isNone(), isTrue);
     });
 
-    test('to nullable', () {
-      expect(Option.from(1).toNullable(), equals(1));
-      expect(Option<int>.from(null).toNullable(), equals(null));
-    });
-
-    test('to string', () {
-      expect(Some(1).toString(), equals('Some<int>(1)'));
-      expect(None<int>().toString(), equals('None<int>()'));
-    });
-
     test('expectations', () {
       expect(Option.some(2).expect('foo'), equals(2));
       expect(() => Option.none().expect('oh no'), throwsException);
-    });
-
-    test('equal values are equal', () {
-      expect(Option.some(2) == Option.some(2), isTrue);
-      expect(Option.some(2) == Option.some(3), isFalse);
-      expect(Option.none() == Option.none(), isTrue);
-      expect(Option.some(2) == Option<int>.none(), isFalse);
-
-      expect(Option.some(2) == Option<double>.some(2), isFalse);
-      expect(Option<int>.none() == Option<double>.none(), isFalse);
     });
 
     test('unwrapping the present', () {
