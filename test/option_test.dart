@@ -118,13 +118,6 @@ void main() {
       );
     });
 
-    test('option as a result', () {
-      expect(Option.some(5).okOr(Exception()), isA<Ok>());
-      expect(Option.none().okOr(Exception()), isA<Err>());
-      expect(Option.some(5).okOrElse(() => fail('oh no')), isA<Ok>());
-      expect(Option.none().okOrElse(Exception.new), isA<Err>());
-    });
-
     test('option as a result async', () async {
       expect(
         await Option.some(5).okOrElseAsync(() => fail('oh no')),
@@ -151,7 +144,7 @@ void main() {
       );
     });
 
-    test('this and that', () async {
+    test('this and that async', () async {
       expect(
         await Option.some(2)
             .andThenAsync((v) async => Option.some(v * 2))
