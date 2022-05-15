@@ -21,7 +21,7 @@ abstract class Option<T extends Object> extends OptionBase<T>
         OptionUnwrapMixin<T>,
         OptionMatchMixin<T>,
         OptionMapFilterMixin<T>,
-        OptionLoginMixin<T>,
+        OptionLogicMixin<T>,
         OptionToResultMixin<T> {
   /// Create a [Some] option with the given value.
   const factory Option.some(T v) = Some;
