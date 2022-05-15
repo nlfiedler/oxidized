@@ -4,6 +4,7 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:oxidized/src/option.dart';
+import 'package:oxidized/src/unit.dart';
 
 /// Result is a type that represents either success (`Ok`) or failure (`Err`).
 ///
@@ -355,6 +356,9 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
     required Future<R> Function(E) err,
   }) =>
       ok(_ok);
+
+  /// Returns a new [Ok]<[Unit], E>
+  static Ok<Unit, E> unit<E extends Object>() => Ok<Unit, E>(Unit.unit);
 }
 
 /// An `Err<T, E>` is a `Result` that represents a failure.
@@ -504,6 +508,9 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
     required Future<R> Function(E) err,
   }) =>
       err(_err);
+
+  /// Returns a new [Err]<[Unit], E>
+  static Err<Unit, E> unit<E extends Object>(E error) => Err<Unit, E>(error);
 }
 
 /// {@template oxidized.ResultUnwrapException}
