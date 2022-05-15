@@ -35,16 +35,5 @@ void main() {
         equals(2),
       );
     });
-
-    test('option as a result async', () async {
-      expect(
-        await Option.some(5).okOrElseAsync(() => fail('oh no')),
-        isA<Ok>(),
-      );
-      expect(
-        await Option.none().okOrElseAsync(() async => Exception()),
-        isA<Err>(),
-      );
-    });
   });
 }
