@@ -10,6 +10,7 @@ This file follows the convention described at
 - kranfix: Replaced `pedantic` (deprecated) by `very_goog_analysis`.
 - kranfix: Refactored `Option` into many mixins.
 - kranfix: Better implementation for `Option` async methods.
+- kranfix: `Ok.unit` and `Err.unit` static methods
 
 ## [5.2.0] - 2022-02-10
 

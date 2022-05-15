@@ -13,7 +13,10 @@ class Unit {
 
   @override
   String toString() => '()';
+
+  /// The one instance of `Unit`.
+  static const Unit unit = Unit._internal();
 }
 
 /// The one instance of `Unit`.
-const Unit unit = Unit._internal();
+const Unit unit = Unit.unit;

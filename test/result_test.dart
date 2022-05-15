@@ -356,4 +356,14 @@ void main() {
       );
     });
   });
+
+  group('Result<Unit, E>', () {
+    test('Ok.unit', () {
+      expect(Ok.unit<String>().unwrap(), equals(Unit.unit));
+    });
+
+    test('Ok.unit', () {
+      expect(Err.unit<String>('message').unwrapErr(), equals('message'));
+    });
+  });
 }
