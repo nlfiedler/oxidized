@@ -27,7 +27,7 @@ void main() {
     });
   });
 
-  group('Future<Option<Option<T>', () {
+  group('Future<Option<Option<T>>>', () {
     test('None().flatten() must return None', () async {
       final OptOptInt input = None();
       final futureInput = Future.value(input);
