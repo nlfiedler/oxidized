@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [5.3.0] - 2022-04-22
+## [5.3.0] - 2022-05-16
 
 - kranfix: Replaced `pedantic` (deprecated) by `very_goog_analysis`.
 - kranfix: Refactored `Option` into many mixins.
