@@ -28,8 +28,8 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   factory Result.of(T Function() catching) {
     try {
       return Ok(catching());
-    } catch (e) {
-      return Err(e as E);
+    } on E catch (e) {
+      return Err(e);
     }
   }
 
@@ -42,8 +42,8 @@ abstract class Result<T extends Object, E extends Object> extends Equatable {
   ) async {
     try {
       return Ok(await catching());
-    } catch (e) {
-      return Err(e as E);
+    } on E catch (e) {
+      return Err(e);
     }
   }
 
