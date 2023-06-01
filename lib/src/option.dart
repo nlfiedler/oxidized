@@ -16,7 +16,7 @@ part 'option/option_unwrap_mixin.dart';
 ///
 /// [Option<T>] is the type used for returning an optional value. It is an
 /// object with a [Some] value, and [None], representing no value.
-abstract class Option<T extends Object> extends OptionBase<T>
+sealed class Option<T extends Object> extends OptionBase<T>
     with
         OptionUnwrapMixin<T>,
         OptionMatchMixin<T>,
@@ -53,6 +53,9 @@ class Some<T extends Object> extends Option<T> {
         super._();
 
   final T _some;
+
+  /// Wrapped value.
+  T get some => _some;
 
   @override
   List<Object?> get props => [_some];
