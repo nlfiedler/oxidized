@@ -91,9 +91,22 @@
 /// package.
 library oxidized;
 
+import 'package:oxidized/src/result.dart';
+
 export 'src/option.dart' show Option, Some, None, OptionUnwrapException;
 export 'src/option_async_utils/option_async_utils.dart';
 export 'src/option_utils/option_utils.dart';
 export 'src/result.dart';
 export 'src/result_utils/result_utils.dart';
 export 'src/unit.dart';
+
+Result<int, Exception> test() {
+  return const Ok(1);
+}
+
+void main() {
+  final value = switch (test()) {
+    Ok(value: final x) => x,
+    Err(err: final e) => 0,
+  };
+}

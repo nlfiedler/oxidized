@@ -11,7 +11,7 @@ import 'package:oxidized/src/unit.dart';
 /// `Result<T, E>` is the type used for returning and propagating errors. It is
 /// an object with an `Ok` value, representing success and containing a value,
 /// and `Err`, representing error and containing an error value.
-abstract class Result<T extends Object, E extends Object> extends Equatable {
+sealed class Result<T extends Object, E extends Object> extends Equatable {
   const Result._();
 
   /// Create an `Ok` result with the given value.
@@ -225,6 +225,9 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
 
   final T _ok;
 
+  /// Wrapped value.
+  T get value => _ok;
+
   @override
   List<Object?> get props => [_ok];
 
@@ -372,6 +375,9 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
         super._();
 
   final E _err;
+
+  /// Wrapped error.
+  E get error => _err;
 
   @override
   List<Object?> get props => [_err];
