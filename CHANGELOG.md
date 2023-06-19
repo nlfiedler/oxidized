@@ -5,6 +5,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [6.0.0] - 2023-06-19
+### Changed
+- Now requires Dart SDK version 3 or higher.
+- **BREAKING CHANGE**: Both `Option` and `Result` are now `sealed` classes
+  which allows for the use of exhaustive pattern matching.
+- feelsantiago: introduced the `sealed` class change to `Option` and `Result`.
+
 ## [5.3.0] - 2023-01-13
 ### Fixed
 - stumblinbear: Fix possible invalid casting in catch block.
