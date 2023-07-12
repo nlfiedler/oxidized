@@ -19,6 +19,20 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   Future<R> match<R>(R Function(T) okop, R Function(E) errop) =>
       then((result) => result.match(okop, errop));
 
+  /// Invokes the `okop` if the result is `Ok`, otherwise does nothing.
+  Future<void> matchOk(void Function(T) okop) => then((result) {
+    if (result.isOk()) {
+      okop(result.unwrap());
+    }
+  });
+
+  /// Invokes the `errop` if the result is `Err`, otherwise does nothing.
+  Future<void> matchErr(void Function(E) errop) => then((result) {
+    if (result.isErr()) {
+      errop(result.unwrapErr());
+    }
+  });
+
   /// Asynchronously invokes either the `okop` or the `errop` depending on
   /// the result.
   ///
@@ -173,6 +187,11 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   ///
   /// Throws the contained error if this result is an `Err`.
   Future<T> unwrap() => then((result) => result.unwrap());
+
+  /// Unwraps a result, yielding the content of an `Ok`.
+  ///
+  /// If the value is an `Err`, returns `null` instead of throwing an exception.
+  Future<T?> unwrapOrNull() => then((result) => result.isOk() ? result.unwrap() : null);
 
   /// Unwraps a result, yielding the content of an `Err`.
   ///

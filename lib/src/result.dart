@@ -62,6 +62,14 @@ sealed class Result<T extends Object, E extends Object> extends Equatable {
   /// See also [when] for another way to achieve the same behavior.
   R match<R>(R Function(T) okop, R Function(E) errop);
 
+ /// Invokes the `okop` if the result is `Ok`, otherwise does nothing.
+  void matchOk(void Function(T) okop) =>
+      this is Ok<T, E> ? okop((this as Ok<T, E>).value) : null;
+
+  /// Invokes the `errop` if the result is `Err`, otherwise does nothing.
+  void matchErr(void Function(E) errop) =>
+      this is Err<T, E> ? errop((this as Err<T, E>).error) : null;
+
   /// Asynchronously invokes either the `okop` or the `errop` depending on
   /// the result.
   ///
@@ -194,6 +202,12 @@ sealed class Result<T extends Object, E extends Object> extends Equatable {
   ///
   /// Throws the contained error if this result is an `Err`.
   T unwrap();
+
+  /// Unwraps a result, yielding the content of an `Ok`.
+  ///
+  /// If the value is an `Err`, returns `null` instead of throwing an exception.
+  T? unwrapOrNull() => (this is Ok<T, E>) ? (this as Ok<T, E>).value : null;
+
 
   /// Unwraps a result, yielding the content of an `Err`.
   ///
@@ -446,7 +460,7 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
       op(_err);
 
   @override
-  T unwrap() => throw ResultUnwrapException<T, E>();
+  T unwrap() => throw ResultUnwrapException<T, E>(_err.toString());
 
   @override
   E unwrapErr() => _err;
