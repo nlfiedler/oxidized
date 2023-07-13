@@ -62,6 +62,12 @@ sealed class Result<T extends Object, E extends Object> extends Equatable {
   /// See also [when] for another way to achieve the same behavior.
   R match<R>(R Function(T) okop, R Function(E) errop);
 
+  /// Invokes the `okop` if the result is `Ok`, otherwise does nothing.
+  R? matchOk<R>(R Function(T) okop);
+
+  /// Invokes the `errop` if the result is `Err`, otherwise does nothing.
+  R? matchErr<R>(R Function(E) errop);
+
   /// Asynchronously invokes either the `okop` or the `errop` depending on
   /// the result.
   ///
@@ -195,6 +201,11 @@ sealed class Result<T extends Object, E extends Object> extends Equatable {
   /// Throws the contained error if this result is an `Err`.
   T unwrap();
 
+  /// Unwraps a result, yielding the content of an `Ok`.
+  ///
+  /// If the value is an `Err`, returns `null` instead of throwing an exception.
+  T? unwrapOrNull();
+
   /// Unwraps a result, yielding the content of an `Err`.
   ///
   /// Throws an exception if the value is an `Ok`, with a custom message
@@ -242,6 +253,12 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
 
   @override
   R match<R>(R Function(T) okop, R Function(E) errop) => okop(_ok);
+
+  @override
+  R? matchOk<R>(R Function(T) okop) => okop(_ok);
+
+  @override
+  R? matchErr<R>(R Function(E) errop) => null;
 
   @override
   R when<R>({required R Function(T) ok, required R Function(E) err}) => ok(_ok);
@@ -292,6 +309,9 @@ class Ok<T extends Object, E extends Object> extends Result<T, E> {
 
   @override
   T unwrap() => _ok;
+
+  @override
+  T? unwrapOrNull() => _ok;
 
   @override
   E unwrapErr() => throw ResultUnwrapException<T, E>(_ok.toString());
@@ -395,6 +415,12 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
   R match<R>(R Function(T) okop, R Function(E) errop) => errop(_err);
 
   @override
+  R? matchOk<R>(R Function(T) okop) => null;
+
+  @override
+  R? matchErr<R>(R Function(E) errop) => errop(_err);
+
+  @override
   R when<R>({required R Function(T) ok, required R Function(E) err}) =>
       err(_err);
 
@@ -446,7 +472,10 @@ class Err<T extends Object, E extends Object> extends Result<T, E> {
       op(_err);
 
   @override
-  T unwrap() => throw ResultUnwrapException<T, E>();
+  T unwrap() => throw ResultUnwrapException<T, E>(_err.toString());
+
+  @override
+  T? unwrapOrNull() => null;
 
   @override
   E unwrapErr() => _err;
