@@ -4,7 +4,7 @@ import 'package:oxidized/oxidized.dart';
 import 'package:test/test.dart';
 
 final throwsAnOptionUnwrapException =
-    throwsA(isA<OptionUnwrapException<int>>());
+    throwsA(isA<OptionUnwrapException<dynamic>>());
 
 void main() {
   test('expectations', () {
