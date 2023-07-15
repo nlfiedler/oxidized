@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [6.1.0] - 2023-07-15
+### Added
+- amaxcz: add `matchOk()`, `matchErr()`, and `unwrapOrNull()` functions to `Result`
+- amaxcs: `unwrap()` function now contains the original error message
+
 ## [6.0.0] - 2023-06-19
 ### Changed
 - Now requires Dart SDK version 3 or higher.

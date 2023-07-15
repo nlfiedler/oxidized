@@ -91,7 +91,7 @@
 /// package.
 library oxidized;
 
-export 'src/option.dart' show Option, Some, None, OptionUnwrapException;
+export 'src/option.dart' show None, Option, OptionUnwrapException, Some;
 export 'src/option_async_utils/option_async_utils.dart';
 export 'src/option_utils/option_utils.dart';
 export 'src/result.dart';
