@@ -3,7 +3,7 @@ part of '../option.dart';
 //// Map and filter methods for [Option]
 mixin OptionMapFilterMixin<T> on OptionBase<T> {
   /// Maps an `Option<T>` to `Option<U>` by applying a function to a contained
-  /// `Some` value. Otherwise returns a `None`.
+  /// [Some] value. Otherwise returns a [None].
   Option<U> map<U>(U Function(T) op) {
     if (this case Some(:final some)) {
       return Some(op(some));
@@ -12,8 +12,8 @@ mixin OptionMapFilterMixin<T> on OptionBase<T> {
     }
   }
 
-  /// Applies a function to the contained value (if any), or returns the
-  /// provided default (if not).
+  /// Applies a function to the value (if this is [Some]), or returns the
+  /// provided default (if this is [None]).
   U mapOr<U>(U Function(T) op, U opt) {
     if (this case Some(:final some)) {
       return op(some);
@@ -32,7 +32,7 @@ mixin OptionMapFilterMixin<T> on OptionBase<T> {
     }
   }
 
-  /// Returns `None` if the option is `None`, otherwise calls `predicate` with
+  /// Returns [None] if the option is [None], otherwise calls `predicate` with
   /// the wrapped value and returns:
   ///
   /// * `Some(t)` if predicate returns `true` (where `t` is the wrapped value)

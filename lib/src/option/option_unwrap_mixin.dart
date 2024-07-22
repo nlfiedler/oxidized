@@ -2,9 +2,10 @@ part of '../option.dart';
 
 /// Methods por `unwrap` or `expect` for [Option]
 mixin OptionUnwrapMixin<T> on OptionBase<T> {
-  /// Unwraps an option, yielding the content of a `Some`.
+  /// Unwraps an option, yielding the content of a [Some].
   ///
-  /// Throws an `Exception` if the value is a `None`, with the passed message.
+  /// Throws an [OptionUnwrapException] if the value is a [None], with the
+  /// passed message.
   T expect(String msg) {
     if (this case Some(:final some)) {
       return some;
@@ -13,9 +14,9 @@ mixin OptionUnwrapMixin<T> on OptionBase<T> {
     }
   }
 
-  /// Unwraps an option, yielding the content of a `Some`.
+  /// Unwraps an option, yielding the content of a [Some].
   ///
-  /// Throws an empty exception if this result is a `None`.
+  /// Throws an empty [OptionUnwrapException] if this result is a [None].
   T unwrap() {
     if (this case Some(:final some)) {
       return some;

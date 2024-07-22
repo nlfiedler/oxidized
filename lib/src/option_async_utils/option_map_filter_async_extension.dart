@@ -3,7 +3,7 @@ part of 'option_async_utils.dart';
 /// Collection of method for async map and filter in a [Option]
 extension OptionMapFilterAsyncX<T> on FutureOr<Option<T>> {
   /// Maps an `Option<T>` to `Option<U>` by applying an asynchronous function
-  /// to a contained `Some` value. Otherwise returns a `None`.
+  /// to a contained [Some] value. Otherwise returns a [None].
   Future<Option<U>> mapAsync<U>(FutureOr<U> Function(T) op) {
     return Future.value(this).then((option) {
       if (this case Some(:final some)) {
@@ -35,7 +35,7 @@ extension OptionMapFilterAsyncX<T> on FutureOr<Option<T>> {
     return Future.value(this).then((option) => option.mapOrElse(op, def));
   }
 
-  /// Returns `None` if the option is `None`, otherwise calls `predicate` with
+  /// Returns [None] if the option is [None], otherwise calls `predicate` with
   /// the wrapped value and returns:
   ///
   /// * `Some(t)` if predicate returns `true` (where `t` is the wrapped value)

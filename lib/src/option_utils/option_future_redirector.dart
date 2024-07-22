@@ -8,10 +8,10 @@ extension OptionFutureRedirector<T> on Future<Option<T>> {
   /// If Option has a None value, it will return `null`.
   Future<T?> toNullable() => then((v) => v.toNullable());
 
-  /// Returns `true` if the option is a `Some` value.
+  /// Returns `true` if the option is a [Some] value.
   Future<bool> isSome() => then((v) => v.isSome());
 
-  /// Returns `true` if the option is a `None` value.
+  /// Returns `true` if the option is a [None] value.
   Future<bool> isNone() => then((v) => v.isNone());
 
   /// Invokes either the `someop` or the `noneop` depending on the option.
@@ -37,9 +37,9 @@ extension OptionFutureRedirector<T> on Future<Option<T>> {
   /// Throws an `Exception` if the value is a [None], with the passed message.
   Future<T> expect(String msg) => then((v) => v.expect(msg));
 
-  /// Unwraps an option, yielding the content of a `Some`.
+  /// Unwraps an option, yielding the content of a [Some].
   ///
-  /// Throws an empty exception if this result is a `None`.
+  /// Throws an empty exception if this result is a [None].
   Future<T> unwrap() => then((v) => v.unwrap());
 
   /// Returns the contained value or a default.
@@ -49,7 +49,7 @@ extension OptionFutureRedirector<T> on Future<Option<T>> {
   Future<T> unwrapOrElse(T Function() op) => unwrapOrElseAsync(op);
 
   /// Maps an `Option<T>` to `Option<U>` by applying a function to a contained
-  /// `Some` value. Otherwise returns a `None`.
+  /// [Some] value. Otherwise returns a `None`.
   Future<Option<U>> map<U>(U Function(T) op) => mapAsync(op);
 
   /// Applies a function to the contained value (if any), or returns the
@@ -79,10 +79,10 @@ extension OptionFutureRedirector<T> on Future<Option<T>> {
   Future<Option<T>> filter(bool Function(T) predicate) =>
       filterAsync(predicate);
 
-  /// Returns `None` if the option is `None`, otherwise returns `optb`.
+  /// Returns [None] if the option is [None], otherwise returns `optb`.
   Future<Option<U>> and<U>(Option<U> optb) => then((v) => v.and(optb));
 
-  /// Returns `None` if the option is `None`, otherwise calls `op` with the
+  /// Returns [None] if the option is [None], otherwise calls `op` with the
   /// wrapped value and returns the result.
   Future<Option<U>> andThen<U>(Option<U> Function(T) op) => andThenAsync(op);
 
@@ -93,7 +93,7 @@ extension OptionFutureRedirector<T> on Future<Option<T>> {
   /// returns the result.
   Future<Option<T>> orElse(Option<T> Function() op) => orElseAsync(op);
 
-  /// Returns `Some` if exactly one of `this`, `optb` is `Some`, otherwise
-  /// returns `None`.
+  /// Returns [Some] if exactly one of `this`, `optb` is [Some], otherwise
+  /// returns [None].
   Future<Option<T>> xor(Option<T> optb) => then((v) => v.xor(optb));
 }
