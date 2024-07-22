@@ -1,8 +1,7 @@
 part of 'result_utils.dart';
 
 /// enable [Result<T, E>] methods in a [Future<Result<T, E>>]
-extension ResultFutureRedirector<T extends Object, E extends Object>
-    on Future<Result<T, E>> {
+extension ResultFutureRedirector<T, E extends Object> on Future<Result<T, E>> {
   /// Returns `true` if the option is a `Ok` value.
   Future<bool> isOk() => then((result) => result.isOk());
 
@@ -59,7 +58,7 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   /// Invoke either the `ok` or the `err` function based on the result.
   ///
   /// This is a combination of the [map()] and [mapErr()] functions.
-  Future<Result<U, F>> fold<U extends Object, F extends Object>(
+  Future<Result<U, F>> fold<U, F extends Object>(
     U Function(T) ok,
     F Function(E) err,
   ) =>
@@ -69,7 +68,7 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   /// the result.
   ///
   /// This is a combination of the [map()] and [mapErr()] functions.
-  Future<Result<U, F>> foldAsync<U extends Object, F extends Object>(
+  Future<Result<U, F>> foldAsync<U, F extends Object>(
     Future<U> Function(T) ok,
     Future<F> Function(E) err,
   ) =>
@@ -95,12 +94,12 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
 
   /// Maps a `Result<T, E>` to `Result<U, E>` by applying a function to a
   /// contained `Ok` value, leaving an `Err` value untouched.
-  Future<Result<U, E>> map<U extends Object>(U Function(T) op) =>
+  Future<Result<U, E>> map<U>(U Function(T) op) =>
       then((result) => result.map(op));
 
   /// Maps a `Result<T, E>` to `Result<U, E>` by applying an asynchronous
   /// function to a contained `Ok` value, leaving an `Err` value untouched.
-  Future<Result<U, E>> mapAsync<U extends Object>(Future<U> Function(T) op) =>
+  Future<Result<U, E>> mapAsync<U>(Future<U> Function(T) op) =>
       then((result) => result.mapAsync(op));
 
   /// Maps a `Result<T, E>` to `Result<T, F>` by applying a function to
@@ -146,19 +145,17 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
       then((result) => result.mapOrElseAsync(op, errOp));
 
   /// Returns `res` if the result is `Ok`, otherwise returns `this`.
-  Future<Result<U, E>> and<U extends Object>(Result<U, E> res) =>
+  Future<Result<U, E>> and<U>(Result<U, E> res) =>
       then((result) => result.and(res));
 
   /// Calls `op` with the `Ok` value if the result is `Ok`, otherwise returns
   /// `this`.
-  Future<Result<U, E>> andThen<U extends Object>(Result<U, E> Function(T) op) =>
+  Future<Result<U, E>> andThen<U>(Result<U, E> Function(T) op) =>
       then((result) => result.andThen(op));
 
   /// Asynchronously calls `op` with the `Ok` value if the result is `Ok`,
   /// otherwise returns `this`.
-  Future<Result<U, E>> andThenAsync<U extends Object>(
-    Future<Result<U, E>> Function(T) op,
-  ) =>
+  Future<Result<U, E>> andThenAsync<U>(Future<Result<U, E>> Function(T) op) =>
       then((result) => result.andThenAsync(op));
 
   /// Returns `res` if the result is an `Err`, otherwise returns `this`.

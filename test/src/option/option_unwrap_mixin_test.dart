@@ -15,6 +15,7 @@ void main() {
   test('unwrapping the present', () {
     expect(() => Option.none().unwrap(), throwsAnOptionUnwrapException);
     expect(Option.some(2).unwrap(), equals(2));
+    expect(Option.some(null).unwrap(), equals(null));
   });
 
   test('unwrapping with a default', () {

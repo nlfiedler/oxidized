@@ -1,7 +1,7 @@
 part of 'option_utils.dart';
 
 /// Collection of utils on [Future<Option<T>>]
-extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
+extension OptionFutureRedirector<T> on Future<Option<T>> {
   /// Returns an nullable that represents this optional value.
   ///
   /// If Option has Some value, it will return that value.
@@ -50,7 +50,7 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
 
   /// Maps an `Option<T>` to `Option<U>` by applying a function to a contained
   /// `Some` value. Otherwise returns a `None`.
-  Future<Option<U>> map<U extends Object>(U Function(T) op) => mapAsync(op);
+  Future<Option<U>> map<U>(U Function(T) op) => mapAsync(op);
 
   /// Applies a function to the contained value (if any), or returns the
   /// provided default (if not).
@@ -80,13 +80,11 @@ extension OptionFutureRedirector<T extends Object> on Future<Option<T>> {
       filterAsync(predicate);
 
   /// Returns `None` if the option is `None`, otherwise returns `optb`.
-  Future<Option<U>> and<U extends Object>(Option<U> optb) =>
-      then((v) => v.and(optb));
+  Future<Option<U>> and<U>(Option<U> optb) => then((v) => v.and(optb));
 
   /// Returns `None` if the option is `None`, otherwise calls `op` with the
   /// wrapped value and returns the result.
-  Future<Option<U>> andThen<U extends Object>(Option<U> Function(T) op) =>
-      andThenAsync(op);
+  Future<Option<U>> andThen<U>(Option<U> Function(T) op) => andThenAsync(op);
 
   /// Returns the option if it contains a value, otherwise returns `optb`.
   Future<Option<T>> or(Option<T> optb) => then((v) => v.or(optb));

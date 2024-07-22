@@ -2,8 +2,7 @@ part of 'result_utils.dart';
 
 /// Utils for transposing [Result<Option<T>, E>] into [Option<Result<T, E>>]
 /// in a [Future]
-extension ResultOptionTransposer<T extends Object, E extends Object>
-    on Result<Option<T>, E> {
+extension ResultOptionTransposer<T, E extends Object> on Result<Option<T>, E> {
   /// Transposes the result to an option.
   ///
   /// ```dart
@@ -27,7 +26,7 @@ extension ResultOptionTransposer<T extends Object, E extends Object>
 
 /// Utils for transposing [Option<Result<T, E>>] into [Result<Option<T>, E>]
 /// in a [Future]
-extension FutureResultOptionTransposer<T extends Object, E extends Object>
+extension FutureResultOptionTransposer<T, E extends Object>
     on Future<Result<Option<T>, E>> {
   /// Transposes the result to an option.
   ///

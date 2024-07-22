@@ -1,17 +1,16 @@
 part of '../option.dart';
 
 /// Methods like and, or, xor
-mixin OptionLogicMixin<T extends Object> on OptionBase<T> {
+mixin OptionLogicMixin<T> on OptionBase<T> {
   /// Returns [None] if the option is [None], otherwise returns `optb`.
-  Option<U> and<U extends Object>(Option<U> optb) {
+  Option<U> and<U>(Option<U> optb) {
     return isSome() ? optb : None<U>();
   }
 
   /// Returns `None` if the option is `None`, otherwise calls `op` with the
   /// wrapped value and returns the result.
-  Option<U> andThen<U extends Object>(Option<U> Function(T) op) {
-    final val = toNullable();
-    return val != null ? op(val) : None<U>();
+  Option<U> andThen<U>(Option<U> Function(T) op) {
+    return isSome() ? op((this as Some<T>).some) : None<U>();
   }
 
   /// Returns the option if it contains a value, otherwise returns `optb`.

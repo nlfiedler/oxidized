@@ -1,7 +1,7 @@
 part of 'result_utils.dart';
 
 /// Utils for flatting [Result<Result<T, E>>]
-extension ResultResultFlattener<T extends Object, E extends Object>
+extension ResultResultFlattener<T, E extends Object>
     on Result<Result<T, E>, E> {
   /// Flattens a [Result<Result<T, E>, E>] into a [Result<T, E>]
   ///
@@ -22,7 +22,7 @@ extension ResultResultFlattener<T extends Object, E extends Object>
 }
 
 /// Utils for flatting [Result<Result<T, E>>] in a [Future]
-extension FutureResultResultFlattener<T extends Object, E extends Object>
+extension FutureResultResultFlattener<T, E extends Object>
     on Future<Result<Result<T, E>, E>> {
   /// Flattens a [Result<Result<T, E>, E>] into a [Result<T, E>]
   ///

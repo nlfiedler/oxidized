@@ -13,6 +13,11 @@ void main() {
       expect(Some(1), isA<Some>());
     });
 
+    test('some of null has a value', () {
+      expect(Option.some(null), isA<Some>());
+      expect(Some(null), isA<Some>());
+    });
+
     test('none has nothing', () {
       expect(Option.none(), isA<None>());
       expect(None(), isA<None>());

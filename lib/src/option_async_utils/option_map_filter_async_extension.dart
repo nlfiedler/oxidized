@@ -1,14 +1,13 @@
 part of 'option_async_utils.dart';
 
 /// Collection of method for async map and filter in a [Option]
-extension OptionMapFilterAsyncX<T extends Object> on FutureOr<Option<T>> {
+extension OptionMapFilterAsyncX<T> on FutureOr<Option<T>> {
   /// Maps an `Option<T>` to `Option<U>` by applying an asynchronous function
   /// to a contained `Some` value. Otherwise returns a `None`.
-  Future<Option<U>> mapAsync<U extends Object>(FutureOr<U> Function(T) op) {
+  Future<Option<U>> mapAsync<U>(FutureOr<U> Function(T) op) {
     return Future.value(this).then((option) {
-      final val = option.toNullable();
-      if (val != null) {
-        return Future.value(op(val)).then(Some.new);
+      if (this case Some(:final some)) {
+        return Future.value(op(some)).then(Some.new);
       } else {
         return None<U>();
       }
@@ -19,8 +18,11 @@ extension OptionMapFilterAsyncX<T extends Object> on FutureOr<Option<T>> {
   /// returns the provided default (if not).
   Future<U> mapOrAsync<U>(FutureOr<U> Function(T) op, U opt) {
     return Future.value(this).then((option) {
-      final val = option.toNullable();
-      return val != null ? op(val) : opt;
+      if (this case Some(:final some)) {
+        return op(some);
+      } else {
+        return opt;
+      }
     });
   }
 
@@ -40,9 +42,11 @@ extension OptionMapFilterAsyncX<T extends Object> on FutureOr<Option<T>> {
   /// * `None` if predicate returns `false`.
   Future<Option<T>> filterAsync(FutureOr<bool> Function(T) predicate) {
     return Future.value(this).then((option) {
-      final val = option.toNullable();
-      if (val == null) return None<T>();
-      return Future.value(predicate(val)).then((v) => v ? this : None<T>());
+      if (this case Some(:final some)) {
+        return Future.value(predicate(some)).then((v) => v ? this : None<T>());
+      } else {
+        return const None();
+      }
     });
   }
 }

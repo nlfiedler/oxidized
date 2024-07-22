@@ -1,10 +1,10 @@
 part of 'option_async_utils.dart';
 
 /// Async method like and, or, xor
-extension OptionLoginAsyncExtension<T extends Object> on FutureOr<Option<T>> {
+extension OptionLoginAsyncExtension<T> on FutureOr<Option<T>> {
   /// Returns `None` if the option is `None`, otherwise asynchronously calls
   /// `op` with the wrapped value and returns the result.
-  Future<Option<U>> andThenAsync<U extends Object>(
+  Future<Option<U>> andThenAsync<U>(
     FutureOr<Option<U>> Function(T) op,
   ) {
     return Future.value(this).then((option) => option.match(op, None.new));
