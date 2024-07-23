@@ -1,12 +1,11 @@
 part of 'result_utils.dart';
 
 /// enable [Result<T, E>] methods in a [Future<Result<T, E>>]
-extension ResultFutureRedirector<T extends Object, E extends Object>
-    on Future<Result<T, E>> {
-  /// Returns `true` if the option is a `Ok` value.
+extension ResultFutureRedirector<T, E extends Object> on Future<Result<T, E>> {
+  /// Returns `true` if the option is a [Ok] value.
   Future<bool> isOk() => then((result) => result.isOk());
 
-  /// Returns `true` if the option is a `Err` value.
+  /// Returns `true` if the option is a [Err] value.
   Future<bool> isErr() => then((result) => result.isErr());
 
   /// Invokes either the `okop` or the `errop` depending on the result.
@@ -19,11 +18,11 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   Future<R> match<R>(R Function(T) okop, R Function(E) errop) =>
       then((result) => result.match(okop, errop));
 
-  /// Invokes the `okop` if the result is `Ok`, otherwise does nothing.
+  /// Invokes the `okop` if the result is [Ok], otherwise does nothing.
   Future<R?> matchOk<R>(R Function(T) okop) =>
       then((result) => result.matchOk(okop));
 
-  /// Invokes the `errop` if the result is `Err`, otherwise does nothing.
+  /// Invokes the `errop` if the result is [Err], otherwise does nothing.
   Future<R?> matchErr<R>(R Function(E) errop) =>
       then((result) => result.matchErr(errop));
 
@@ -59,7 +58,7 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   /// Invoke either the `ok` or the `err` function based on the result.
   ///
   /// This is a combination of the [map()] and [mapErr()] functions.
-  Future<Result<U, F>> fold<U extends Object, F extends Object>(
+  Future<Result<U, F>> fold<U, F extends Object>(
     U Function(T) ok,
     F Function(E) err,
   ) =>
@@ -69,7 +68,7 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   /// the result.
   ///
   /// This is a combination of the [map()] and [mapErr()] functions.
-  Future<Result<U, F>> foldAsync<U extends Object, F extends Object>(
+  Future<Result<U, F>> foldAsync<U, F extends Object>(
     Future<U> Function(T) ok,
     Future<F> Function(E) err,
   ) =>
@@ -83,28 +82,28 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
   /// Otherwise returns `None` if the result is a value.
   Future<Option<E>> err() => then((result) => result.err());
 
-  /// Unwraps a result, yielding the content of an `Ok`.
+  /// Unwraps a result, yielding the content of an [Ok].
   ///
-  /// Throws an `Exception` if the value is an `Err`, with the passed message.
+  /// Throws an `Exception` if the value is an [Err], with the passed message.
   Future<T> expect(String msg) => then((result) => result.expect(msg));
 
-  /// Unwraps a result, yielding the content of an `Err`.
+  /// Unwraps a result, yielding the content of an [Err].
   ///
-  /// Throws an `Exception` if the value is an `Ok`, with the passed message.
+  /// Throws an `Exception` if the value is an [Ok], with the passed message.
   Future<E> expectErr(String msg) => then((result) => result.expectErr(msg));
 
   /// Maps a `Result<T, E>` to `Result<U, E>` by applying a function to a
-  /// contained `Ok` value, leaving an `Err` value untouched.
-  Future<Result<U, E>> map<U extends Object>(U Function(T) op) =>
+  /// contained [Ok] value, leaving an [Err] value untouched.
+  Future<Result<U, E>> map<U>(U Function(T) op) =>
       then((result) => result.map(op));
 
   /// Maps a `Result<T, E>` to `Result<U, E>` by applying an asynchronous
-  /// function to a contained `Ok` value, leaving an `Err` value untouched.
-  Future<Result<U, E>> mapAsync<U extends Object>(Future<U> Function(T) op) =>
+  /// function to a contained [Ok] value, leaving an [Err] value untouched.
+  Future<Result<U, E>> mapAsync<U>(Future<U> Function(T) op) =>
       then((result) => result.mapAsync(op));
 
   /// Maps a `Result<T, E>` to `Result<T, F>` by applying a function to
-  /// a contained `Err` value, leaving an `Ok` value untouched.
+  /// a contained [Err] value, leaving an [Ok] value untouched.
   ///
   /// This function can be used to pass through a successful result while
   /// handling an error.
@@ -112,7 +111,7 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
       then((result) => result.mapErr(op));
 
   /// Maps a `Result<T, E>` to `Result<T, F>` by applying a function to
-  /// a contained `Err` value, leaving an `Ok` value untouched.
+  /// a contained [Err] value, leaving an [Ok] value untouched.
   ///
   /// This function can be used to pass through a successful result while
   /// handling an error.
@@ -133,76 +132,74 @@ extension ResultFutureRedirector<T extends Object, E extends Object>
       then((result) => result.mapOrAsync(op, opt));
 
   /// Maps a `Result<T, E>` to `U` by applying a function to a contained
-  /// `Ok` value, or a fallback function to a contained `Err` value.
+  /// [Ok] value, or a fallback function to a contained [Err] value.
   Future<U> mapOrElse<U>(U Function(T) op, U Function(E) errOp) =>
       then((result) => result.mapOrElse(op, errOp));
 
   /// Maps a `Result<T, E>` to `U` by applying a function to a contained
-  /// `Ok` value, or a fallback function to a contained `Err` value.
+  /// [Ok] value, or a fallback function to a contained [Err] value.
   Future<U> mapOrElseAsync<U>(
     Future<U> Function(T) op,
     Future<U> Function(E) errOp,
   ) =>
       then((result) => result.mapOrElseAsync(op, errOp));
 
-  /// Returns `res` if the result is `Ok`, otherwise returns `this`.
-  Future<Result<U, E>> and<U extends Object>(Result<U, E> res) =>
+  /// Returns `res` if the result is [Ok], otherwise returns `this`.
+  Future<Result<U, E>> and<U>(Result<U, E> res) =>
       then((result) => result.and(res));
 
-  /// Calls `op` with the `Ok` value if the result is `Ok`, otherwise returns
+  /// Calls `op` with the [Ok] value if the result is [Ok], otherwise returns
   /// `this`.
-  Future<Result<U, E>> andThen<U extends Object>(Result<U, E> Function(T) op) =>
+  Future<Result<U, E>> andThen<U>(Result<U, E> Function(T) op) =>
       then((result) => result.andThen(op));
 
-  /// Asynchronously calls `op` with the `Ok` value if the result is `Ok`,
+  /// Asynchronously calls `op` with the [Ok] value if the result is [Ok],
   /// otherwise returns `this`.
-  Future<Result<U, E>> andThenAsync<U extends Object>(
-    Future<Result<U, E>> Function(T) op,
-  ) =>
+  Future<Result<U, E>> andThenAsync<U>(Future<Result<U, E>> Function(T) op) =>
       then((result) => result.andThenAsync(op));
 
-  /// Returns `res` if the result is an `Err`, otherwise returns `this`.
+  /// Returns `res` if the result is an [Err], otherwise returns `this`.
   Future<Result<T, F>> or<F extends Object>(Result<T, F> res) =>
       then((result) => result.or(res));
 
-  /// Calls `op` with the `Err` value if the result is `Err`, otherwise returns
+  /// Calls `op` with the [Err] value if the result is [Err], otherwise returns
   /// `this`.
   Future<Result<T, F>> orElse<F extends Object>(Result<T, F> Function(E) op) =>
       then((result) => result.orElse(op));
 
-  /// Calls `op` with the `Err` value if the result is `Err`, otherwise returns
+  /// Calls `op` with the [Err] value if the result is [Err], otherwise returns
   /// `this`.
   Future<Result<T, F>> orElseAsync<F extends Object>(
     Future<Result<T, F>> Function(E) op,
   ) =>
       then((result) => result.orElseAsync(op));
 
-  /// Unwraps a result, yielding the content of an `Ok`.
+  /// Unwraps a result, yielding the content of an [Ok].
   ///
-  /// Throws the contained error if this result is an `Err`.
+  /// Throws the contained error if this result is an [Err].
   Future<T> unwrap() => then((result) => result.unwrap());
 
-  /// Unwraps a result, yielding the content of an `Ok`.
+  /// Unwraps a result, yielding the content of an [Ok].
   ///
-  /// If the value is an `Err`, returns `null` instead of throwing an exception.
+  /// If the value is an [Err], returns `null` instead of throwing an exception.
   Future<T?> unwrapOrNull() => then((result) => result.unwrapOrNull());
 
-  /// Unwraps a result, yielding the content of an `Err`.
+  /// Unwraps a result, yielding the content of an [Err].
   ///
-  /// Throws an exception if the value is an `Ok`, with a custom message
-  /// provided by calling `toString()` on the `Ok`'s value.
+  /// Throws an exception if the value is an [Ok], with a custom message
+  /// provided by calling `toString()` on the [Ok]'s value.
   Future<E> unwrapErr() => then((result) => result.unwrapErr());
 
-  /// Unwraps a result, yielding the content of an `Ok`. Else, it returns `opt`.
+  /// Unwraps a result, yielding the content of an [Ok]. Else, it returns `opt`.
   Future<T> unwrapOr(T opt) => then((result) => result.unwrapOr(opt));
 
-  /// Unwraps a result, yielding the content of an `Ok`. If the value is an
-  /// `Err` then it calls `op` with its value.
+  /// Unwraps a result, yielding the content of an [Ok]. If the value is an
+  /// [Err] then it calls `op` with its value.
   Future<T> unwrapOrElse(T Function(E) op) =>
       then((result) => result.unwrapOrElse(op));
 
-  /// Unwraps a result, yielding the content of an `Ok`. If the value is an
-  /// `Err` then it asynchronously calls `op` with its value.
+  /// Unwraps a result, yielding the content of an [Ok]. If the value is an
+  /// [Err] then it asynchronously calls `op` with its value.
   Future<T> unwrapOrElseAsync(Future<T> Function(E) op) =>
       then((result) => result.unwrapOrElseAsync(op));
 }

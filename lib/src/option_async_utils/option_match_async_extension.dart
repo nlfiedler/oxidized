@@ -1,7 +1,7 @@
 part of 'option_async_utils.dart';
 
 /// Collection of methods to work with [Future] on [OptionMatchMixin]
-extension OptionMatchAsyncX<T extends Object> on FutureOr<Option<T>> {
+extension OptionMatchAsyncX<T> on FutureOr<Option<T>> {
   /// Asynchronously invokes either the `someop` or the `noneop` depending on
   /// the option.
   ///

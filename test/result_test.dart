@@ -15,6 +15,13 @@ void main() {
       expect(Ok(1).isErr(), isFalse);
     });
 
+    test('ok of null is okay', () {
+      expect(Result.ok(null), isA<Ok>());
+      expect(Ok(null), isA<Ok>());
+      expect(Ok(null).isOk(), isTrue);
+      expect(Ok(null).isErr(), isFalse);
+    });
+
     test('unit value is an ok unit', () {
       final result = Result.ok(unit);
       expect(result, isA<Ok>());
@@ -82,7 +89,7 @@ void main() {
 
       expect(
         Result.err('message').toString(),
-        equals('Err<Object, String>(message)'),
+        equals('Err<dynamic, String>(message)'),
       );
       expect(
         Result<int, String>.err('message').toString(),

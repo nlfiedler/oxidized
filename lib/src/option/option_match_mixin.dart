@@ -1,7 +1,7 @@
 part of '../option.dart';
 
 ///
-mixin OptionMatchMixin<T extends Object> on OptionBase<T> {
+mixin OptionMatchMixin<T> on OptionBase<T> {
   /// Invokes either the `someop` or the `noneop` depending on the option.
   ///
   /// This is an attempt at providing something similar to the Rust `match`
@@ -9,9 +9,8 @@ mixin OptionMatchMixin<T extends Object> on OptionBase<T> {
   ///
   /// See also [when] for another way to achieve the same behavior.
   R match<R>(R Function(T) someop, R Function() noneop) {
-    final val = toNullable();
-    if (val != null) {
-      return someop(val);
+    if (this case Some(:final some)) {
+      return someop(some);
     } else {
       return noneop();
     }

@@ -16,7 +16,7 @@ part 'option/option_unwrap_mixin.dart';
 ///
 /// [Option<T>] is the type used for returning an optional value. It is an
 /// object with a [Some] value, and [None], representing no value.
-sealed class Option<T extends Object> extends OptionBase<T>
+sealed class Option<T> extends OptionBase<T>
     with
         OptionUnwrapMixin<T>,
         OptionMatchMixin<T>,
@@ -46,7 +46,7 @@ sealed class Option<T extends Object> extends OptionBase<T>
 /// `Option.some()` factory constructor. The advantage of using the factory
 /// constructor on `Option` is that it will yield a `None` if the passed value
 /// is `null`, which can be helpful.
-class Some<T extends Object> extends Option<T> {
+class Some<T> extends Option<T> {
   /// Create a `Some` option with the given value.
   const Some(T v)
       : _some = v,
@@ -69,7 +69,7 @@ class Some<T extends Object> extends Option<T> {
 /// You can construct a `None` using the `None()` constructor or by calling the
 /// `Option.none()` factory constructor. A `None` is also returned when a `null`
 /// is passed to the `Option.some()` factory constructor.
-class None<T extends Object> extends Option<T> {
+class None<T> extends Option<T> {
   /// Create a `None` option with no value.
   const None() : super._();
 

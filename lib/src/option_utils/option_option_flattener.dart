@@ -1,7 +1,7 @@
 part of 'option_utils.dart';
 
 /// Flat utils on [Option<Option<T>>]
-extension OptionOptionFlattener<T extends Object> on Option<Option<T>> {
+extension OptionOptionFlattener<T> on Option<Option<T>> {
   /// Flats an option of an option.
   ///
   /// ```dart
@@ -21,8 +21,7 @@ extension OptionOptionFlattener<T extends Object> on Option<Option<T>> {
 }
 
 /// Flat utils on [Future<Option<Option<T>>>]
-extension FutureOptionOptionFlattener<T extends Object>
-    on Future<Option<Option<T>>> {
+extension FutureOptionOptionFlattener<T> on Future<Option<Option<T>>> {
   /// Flats an option of an option.
   ///
   /// ```dart
