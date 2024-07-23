@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This file follows the convention described at
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unrealeased]
+## [6.2.0] - 2024-07-22
 ### Changed
 - JonasWanke: allow nullable values in `Some` and `Ok`
 

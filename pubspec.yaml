@@ -1,6 +1,6 @@
 name: oxidized
 description: Definitions of Rust-like types, Option and Result, to promote safer programming.
-version: 6.1.0
+version: 6.2.0
 homepage: https://github.com/nlfiedler/oxidized
 repository: https://github.com/nlfiedler/oxidized.git
 issue_tracker: https://github.com/nlfiedler/oxidized/issues
